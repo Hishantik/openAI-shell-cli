@@ -15,12 +15,8 @@ else
         apt install jq
 fi
 
-if [ -f dekuai.sh ]
-then
-        mv dekuai.sh ../usr/bin/dekuai 
-else
-        curl -sS https://raw.githubusercontent.com/Hishantik/openAI-shell-cli/main/dekuai.sh -o ~/../usr/bin/dekuai
-fi
+curl -sS https://raw.githubusercontent.com/Hishantik/openAI-shell-cli/main/dekuai.sh -o ~/../usr/bin/dekuai
+
 
 chmod +x ~/../usr/bin/dekuai
 
