@@ -12,7 +12,7 @@ while $running; do
 	response=$(curl https://api.openai.com/v1/completions \
 		-sS \
   		-H 'Content-Type: application/json' \
-  		-H "Authorization: Bearer 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" \
+  		-H "Authorization: Bearer $OPENAI_TOKEN" \
   		-d '{
   			"model": "text-davinci-003",
   			"prompt": "'"${command}"'",
