@@ -22,7 +22,6 @@ chmod +x ~/../usr/bin/dekuai
 
 echo -n "Please enter your OpenAI API key: "  
 read token
-# Adding OpenAI token to shell profile
 if [ -f ~/.zshrc ]; then
   echo "export OPENAI_TOKEN=$token" >> ~/.zshrc
   echo 'export PATH=$PATH:/usr/bin' >> ~/.zshrc
