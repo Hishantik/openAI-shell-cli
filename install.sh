@@ -17,7 +17,7 @@ fi
 
 if [ -f dekuai.sh ]
 then
-        mv dekuai.sh ../usr/local/bin/chatgpt|| mv dekuai.sh ../usr/bin/dekuai
+        mv dekuai.sh ../usr/bin/dekuai 
 else
         curl -sS https://raw.githubusercontent.com/Hishantik/openAI-shell-cli/main/dekuai.sh -o ~/../usr/bin/dekuai
 fi
