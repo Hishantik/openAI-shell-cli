@@ -20,7 +20,7 @@ curl -sS https://raw.githubusercontent.com/Hishantik/openAI-shell-cli/main/dekua
 
 chmod +x ~/../usr/bin/dekuai
 
-read -p "Please enter your OpenAI API key: " 
+read -n "Please enter your OpenAI API key: " token 
 
 # Adding OpenAI token to shell profile
 if [ -f ~/.zshrc ]; then
