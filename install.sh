@@ -1,4 +1,4 @@
-#!/usr/bin/zsh
+#!/usr/bin/bash
 
 # Check dependencies
 if type curl &>/dev/null
@@ -20,7 +20,7 @@ curl -sS https://raw.githubusercontent.com/Hishantik/openAI-shell-cli/main/dekua
 
 chmod +x ~/../usr/bin/dekuai
 
-echo -n "Please enter your OpenAI API key: "  
+echo -n "Please enter your OpenAI API key: "
 read token
 
 if [ -f ~/.zshrc ]; then
