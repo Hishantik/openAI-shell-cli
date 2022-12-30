@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/zsh
 
 # Check dependencies
 if type curl &>/dev/null
@@ -41,4 +41,3 @@ else
 fi
 echo "Installation complete."
 
-dekuai
