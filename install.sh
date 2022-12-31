@@ -35,5 +35,6 @@ else
     echo "You need to add this to your shell profile: export OPENAI_TOKEN=$token"
   fi
 fi
+source ~/.bashrc || source ~/.zshrc
 echo "Installation complete."
 
