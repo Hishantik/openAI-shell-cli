@@ -16,7 +16,8 @@ usage() {
 
         Options:
           -v | --version to display current version of cli
-          -u | --update to upadte current cli to newest versiono
+          -U | --update to upadte current cli to newest versiono
+          -u | --uninstall to uninstall DekuAI (works only with termux)
           -h | --help to display this help text
 EOF
 }
@@ -33,6 +34,10 @@ quit () {
 
 info () {
   printf "\33[2K\r\033[1;33m%s \033[1;35m%s\033[0m\n" "$1" "$2"                           
+}
+
+uninstall(){
+  rm $PREFIX/bin/"$0"
 }
 
 update () {
@@ -69,7 +74,7 @@ loading(){
 }
 
 
-OPT=$(getopt -o vuh -l version,update,help --n "$0" -- "$@")
+OPT=$(getopt -o vuUh -l version,update,help,uninstall --n "$0" -- "$@")
 
 eval set -- "$OPT"
 unset OPT
@@ -77,7 +82,8 @@ unset OPT
 while true; do
         case $1 in
         -v | --version) version && exit 0 ;;
-        -u | --update) update &&  exit 0 ;;
+        -u | --uninstall) uninstall && exit 0;;
+        -U | --update) update &&  exit 0 ;;
         -h | --help) usage && exit 0 ;;
         --) shift && break ;;
         *) printf "\33[0:31mInvalid option: %s" "$1" && usage && exit 1 ;;
