@@ -39,7 +39,7 @@ update () {
         update="$(curl  -sS "https://raw.githubusercontent.com/Hishantik/openAI-shell-cli/main/dekuai.sh")" || die "Connection error"
         update="$(printf '%s\n' "$update" | diff -u "$0" -)"
         if [ -z "$update" ]; then
-                inf "Script is up to date :)"
+                info "Script is up to date :)"
         else
                 if printf '%s\n' "$update" | patch "$0" - ; then
                         info "Script has been updated"
