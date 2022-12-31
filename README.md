@@ -9,6 +9,7 @@
 ![os Linux](https://img.shields.io/badge/Os-Linux%20-588157?logo=Linux)
 ![os MacOs](https://img.shields.io/badge/Os-macOS%20-588157?logo=macOS)
 ![os Windows](https://img.shields.io/badge/Os-Windows%20-588157?logo=windows)
+
 ***
 
 <font size=4>
@@ -58,6 +59,7 @@ This cli tool highly depends on `curl` for request to api & `jq` to parse the js
 
 - **Open API key** is required.Create an OpenAI account and get free api key from [OpenAI](https://beta.openai.com/account/api-keys).
 </font>
+
 ***
 
 ### **Installation**
@@ -181,16 +183,17 @@ If you have any questions regarding the project , [**join our discord server**](
 
 [![Discord Server](http://invidget.switchblade.xyz/P7DJ3bwW#gh-dark-mode-only)](https://discord.gg/P7DJ3bwW)
 
-[![Discord Server](http://invidget.switchblade.xyz/P7DJ3bwW?theme=light#gh-light-mode-only)](https://discord.gg/P7DJ3bwW)
 
 
 ***
+
 ### License
     
     copyright © 2022 DekuAI open source project
 
 
 ***
+
 ### Credits
 
 <div align=center>
