@@ -49,6 +49,7 @@
 
 **Getting Started**
 </font>
+
 ### **Prerequisites**
 
 <font size=2>
@@ -58,13 +59,15 @@ This cli tool highly depends on `curl` for request to api & `jq` to parse the js
 - **Open API key** is required.Create an OpenAI account and get free api key from [OpenAI](https://beta.openai.com/account/api-keys).
 </font>
 ***
+
 ### **Installation**
+
 <font size=2>
 
 **Note :** After running installation command it will prompt you to enter openAI api key, enter your api key when prompted.
 </font>
 
-#### **Android**
+## **Android**
 
 <font size=2>
 
@@ -176,8 +179,9 @@ Pull request are welcome. To add some feature or changes please open an issue fi
 If you have any questions regarding the project , [**join our discord server**](https://discord.gg/P7DJ3bwW)
 </font>
 
-![Discord Server](http://invidget.switchblade.xyz/P7DJ3bwW#gh-dark-mode-only)
-![Discord Server](http://invidget.switchblade.xyz/P7DJ3bwW?theme=light#gh-light-mode-only)
+[![Discord Server](http://invidget.switchblade.xyz/P7DJ3bwW#gh-dark-mode-only)](https://discord.gg/P7DJ3bwW)
+
+[![Discord Server](http://invidget.switchblade.xyz/P7DJ3bwW?theme=light#gh-light-mode-only)](https://discord.gg/P7DJ3bwW)
 
 
 ***
