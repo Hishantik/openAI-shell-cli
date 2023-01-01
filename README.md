@@ -36,6 +36,7 @@
 - [Installation](#installation)
    - [Android](#android)
    - [Linux](#linux)
+      - [Debian](#debian)
    - [macOS](#macos)
    - [Windows](#windows)
 - [Usage](#usage)

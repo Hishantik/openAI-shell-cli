@@ -17,7 +17,7 @@ usage() {
         Options:
           -v | --version to display current version of cli
           -U | --update to upadte current cli to newest versiono
-          -u | --uninstall to uninstall DekuAI (works only with termux)
+          -u | --uninstall to uninstall DekuAI (might works only with android)
           -h | --help to display this help text
 EOF
 }
