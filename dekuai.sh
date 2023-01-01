@@ -37,7 +37,7 @@ info () {
 }
 
 uninstall(){
-  rm $PREFIX/bin/"$0"
+  rm "$0"
 }
 
 update () {
