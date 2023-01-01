@@ -5,9 +5,22 @@ if type curl &>/dev/null
 then
         echo "" &>/dev/null
 else
+  if type apt &/dev/null
+  then
         apt update && apt upgrade
         apt install curl
+  else
+    if type pkg &/dev/null
+    then 
+        pkg update && pkg upgrade
+        pkg install curl
+    else
+        printf "Can't find package installer for required dependencies. Install package 'curl' & 'jq' manually......"
+        exit 0
+    fi
+  fi
 fi
+
 if type jq &>/dev/null
 then
         echo "" &>/dev/null
@@ -20,7 +33,7 @@ curl -sS https://raw.githubusercontent.com/Hishantik/openAI-shell-cli/main/dekua
 
 chmod +x ~/../usr/bin/dekuai
 
-echo -n "Please enter your OpenAI API key (you can get https://https://openai.com/api/): "
+echo -n "Please enter your OpenAI API key (you can one get from https://https://openai.com/account/api-keys): "
 read token
 
 if [ -f ~/.zshrc ]; then
