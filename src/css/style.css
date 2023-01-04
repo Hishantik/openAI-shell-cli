@@ -1,0 +1,183 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Kodchasan:ital,wght@0,200;0,400;0,600;1,200;1,400;1,600&family=Nunito+Sans:ital,wght@0,200;0,600;1,200;1,700&display=swap');
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+.particles-js{
+  background-color: #353535;
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  height:8000px;
+}
+
+
+@media screen and (min-width:480px){
+.heading{
+  padding: 40px;
+  width: 50%;
+  border: 2px solid white;
+  align-self: center;
+  position: absolute;
+  font-weight: 700;
+  font-size: 25px;
+  display: flex;
+  font-family: Kodchasan;
+  justify-content: center;
+  align-items: center;
+  color: #2D6A4F;
+}
+
+
+.introduction{
+  margin-left: 50px;
+  z-index: 100;
+  font-size: 25px;
+  position: absolute;
+  top: 200px;
+  color: #2D6A4F;
+  font-family: Kodchasan;
+  padding:20px;
+  font-weight:bold;
+  border: 1px solid white;
+  width:300px;
+}
+
+.concept{
+  margin-left: 50px;
+  z-index: 100;
+  font-size: 25px;
+  position: absolute;
+  top: 600px;
+  color: #2D6A4F;
+  font-family: Kodchasan;
+  padding:20px;
+  font-weight:bold;
+  border: 1px solid white;
+  width:600px;
+}
+
+p{
+ color: #EEE0CC; 
+}
+
+}
+
+
+@media screen and (max-width:480px){
+.heading{
+  padding: 40px;
+  width: 400px;
+  align-self: center;
+  position: absolute;
+  font-weight: 700;
+  font-size: 25px;
+  display: flex;
+  font-family: Kodchasan;
+  justify-content: center;
+  align-items: center;
+  color: #2D6A4F;
+}
+
+
+.introduction{
+  z-index: 100;
+  position: absolute;
+  background-image: url(http://www.transparenttextures.com/patterns/dark-denim.png);
+  top: 150px;
+  color: #2D6A4F;
+  font-family: Kodchasan;
+  padding:20px;
+  border: 1px solid #EEE0CC;
+  width:90%;
+}
+
+.concept{
+  z-index: 100;
+  font-size: 13px;
+  position: absolute;
+  background-image: url(http://www.transparenttextures.com/patterns/dark-denim.png);
+  top: 570px;
+  color: #2D6A4F;
+  font-family: Kodchasan;
+  padding:20px;
+  font-weight:bold;
+  border: 1px solid #EEE0CC;
+  width:90%;
+}
+  a{
+    color:#0077B6;
+    font-weight: bold;
+    text-decoration: none;
+  }
+
+  .demo{
+    position: absolute;
+    top: 370px;
+    z-index: 100;
+  }
+
+  .badges{
+    display: flex;
+    width:300px;
+    justify-content: space-evenly;
+    position: absolute;
+    top: 120px;
+  }
+
+  .badges>img{
+    height:15px;
+    width:50px;
+  }
+
+  img{
+    width:350px;
+    height:175px;
+  }
+
+.main{
+    position: absolute;
+    top: 700px;
+    width: 100%;
+    padding: 30px;
+    color: #2D6A4F;
+    font-family: Kodchasan;
+  }
+
+ span{
+    font-weight: bold;
+  }
+
+p{
+ color: #EEE0CC; 
+}
+
+.codeblockcontent_blex{
+    display: flex;
+    justify-content: space-between;
+    border-radius:4px;
+    padding: 10px;
+    border: 1px solid white;
+  }
+
+.clean-btn{
+    padding: 10px;
+    background-color: #2D6A4F;
+    color:#fff;
+
+  }
+
+  code{
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+  }
+
+
+}
