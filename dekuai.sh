@@ -2,7 +2,7 @@
 
 
 
-VERSION="1.0.1"
+VERSION="1.3.1"
 
 
 
@@ -44,10 +44,10 @@ update () {
         update="$(curl  -sS "https://raw.githubusercontent.com/Hishantik/openAI-shell-cli/main/dekuai.sh")" || die "Connection error"
         update="$(printf '%s\n' "$update" | diff -u "$0" -)"
         if [ -z "$update" ]; then
-                info "Script is up to date :)"
+                info "DekuAI is up to date :)"
         else
                 if printf '%s\n' "$update" | patch "$0" - ; then
-                        info "Script has been updated"
+                        info "DekuAI has been updated"
                 else
                         quit "Can't update for some reason!"                                                     
                   fi
@@ -61,15 +61,15 @@ version (){
 }
 
 loading(){
-        echo -ne '           loading —————                      [20%]\r'
+        echo -ne '           processing —————                      [20%]\r'
         sleep 0.5
-        echo -ne '           loading —————————                  [40%]\r'
+        echo -ne '           processing —————————                  [40%]\r'
         sleep 0.5
-        echo -ne '           loading ——————————————             [60%]\r'
+        echo -ne '           processing ——————————————             [60%]\r'
         sleep 0.5
-        echo -ne '           loading ————————————————————       [80%]\r'
+        echo -ne '           processing ————————————————————       [80%]\r'
         sleep 0.5
-        echo -ne '           loading —————————————————————————— [100%]\r'
+        echo -ne '           processing —————————————————————————— [100%]\r'
         echo -ne '\n'
 }
 
@@ -93,27 +93,28 @@ done
 echo -e "\033[0;36mWelcome to DekuAI. You can quit with \033[1;33m'exit'\033[0;36m & clear screen with \033[1;33m'clear'."
 running=true
 while $running; do
-  echo -e -n "\n \033[0;36mAsk :\033[1;32m "
-  read command
+  echo -en "\n \033[0;36mAsk :\033[1;32m "
+  read input
   tput civis
-  if [ "$command" == "exit" ]; then
+  if [ "$input" == "exit" ]; then
     running=false
+    exit 0
   else
-    if [ "$command" == "clear" ]; then
+    if [ "$input" == "clear" ]; then
       clear
     else
+            loading &
             response=$(curl https://api.openai.com/v1/completions \
                   -sS \
                 -H 'Content-Type: application/json' \
                 -H "Authorization: Bearer $OPENAI_TOKEN" \
                 -d '{
                         "model": "text-davinci-003",
-                        "prompt": "'"${command}"'",
+                        "prompt": "'"${input}"'",
                         "max_tokens": 1000,
                         "temperature": 0.7
-            }' | jq -r '.choices[].text' | awk '{ printf "%s", $0 }')
-      loading
-            echo -e "\n\033[0;36mDekuAI : \033[1;33m${response}"
+            }' | jq -r '.choices[].text' | awk '{ printf "%s", $0 }') 
+           echo -e "\n\033[0;36mDekuAI : \033[1;33m${response}"
     fi
   fi
   tput cnorm
