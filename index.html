@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>DekuAI</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="./src/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+  <div id="particles-js" class="particles-js">
+    <div class="heading">
+      <!-- <h1>DekuAI-cli-tool</h1> -->
+      <div id="typewriter1"></div>
+    </div>
+    <div class="badges">
+      <img src="https://img.shields.io/badge/Os-Android%20-588157?logo=android" alt="android">
+      <img src="https://img.shields.io/badge/Os-Linux%20-588157?logo=linux" alt="linux">
+      <img src="https://img.shields.io/badge/Os-macOS%20-588157?logo=macos" alt="macOS">
+      <img src="https://img.shields.io/badge/Os-Windows%20-588157?logo=windows" alt="Windows">
+    </div>
+    <div class="introduction">
+      <h2>Introduction</h2>
+      <p>DekuAI is a AI-powered chatbot tool but in cli based that has ability to generate natural & conversational
+        customer experiences as prompt string. </p>
+    </div>
+    <div class="demo">
+      <img src="https://user-images.githubusercontent.com/60609786/210539226-7cac8f83-6ad9-4dc9-800e-037bc9aff050.gif"
+        alt="demo gif">
+    </div>
+    <div class="concept">
+      <h2>Concept</h2>
+      <p></p>
+    </div>
+    <div class="main">
+      <h2>Getting Started</h2>
+      <h3>Prerequisites</h3>
+      <br>
+      <p>This cli tool highly depends on curl for request to api & jq to parse the json response.
+        <br><br>
+        <span>• Open api key</span> is required.Create an OpenAI account and get free api key from <a
+          href="https://beta.openai.com/account/api-keys">OpenAI</a>.
+      </p>
+      <br><br>
+      <hr><br>
+      <h2>Installation</h2>
+      <br>
+      <p><span>Note :</span> After running installation command it will prompt you to enter openAI api key, enter your
+        api key when prompted.</p>
+      <br><br>
+      <h2>Android</h2>
+      <br>
+      <p>Install termux <a href="https://termux.dev/en/">(guide)</a>.</p>
+      <br>
+      <h3>Termux package</h3>
+      <br>
+      <div class="codeblockcontent_blex">
+        <pre>
+          <code>
+            <span style="color:#A5A5A5">pkg</span>
+            <span style="color:#80A1D4">install</span>
+            <span>curl</span>
+            <span style="color:#80A1D4">-y</span>
+          </code>
+        </pre>
+        <div class="copyContainer">
+          <button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn">
+             <i class="fa fa-clone"></i>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script src="https://unpkg.com/typewriter-effect@latest/dist/core.js"></script>
+  <script>
+    particlesJS.load('particles-js', './src/components/particle.json', function () {
+      console.log('callback - particles.js config loaded');
+    });
+    const instance = new Typewriter('#typewriter1', {
+      loop: true
+    });
+    instance.typeString("DekuAI-cli-tool")
+      .pauseFor(1000)
+      .deleteAll(10)
+      .typeString('A simple and interactive AI powred cli tool.')
+      .deleteAll()
+      .start();
+  </script>
+</body>
+
+</html>
