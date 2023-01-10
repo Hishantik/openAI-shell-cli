@@ -179,10 +179,13 @@ Pull request are welcome. To add some feature or changes please open an issue fi
 
 - [Contribution guide](./CONTRIBUTING.md)
     
-If you have any questions regarding the project , [**join our discord server**](https://discord.gg/P7DJ3bwW)
+If you have any questions regarding the project , [**join our discord server**](https://discord.gg/dgJAesCnQ5)
 </font>
 
-[![Discord Server](http://invidget.switchblade.xyz/P7DJ3bwW#gh-dark-mode-only)](https://discord.gg/P7DJ3bwW)
+
+
+
+[![Discord Server](http://invidget.switchblade.xyz/dgJAesCnQ5)](https://discord.gg/dgJAesCnQ5)
 
 
 
