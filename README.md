@@ -58,7 +58,7 @@
 
 This cli tool highly depends on `curl` for request to api & `jq` to parse the json response.
 
-- **Open API key** is required.Create an OpenAI account and get free api key from [OpenAI](https://beta.openai.com/account/api-keys).
+- **OpenAI API key** is required.Create an OpenAI account and get free api key from [OpenAI](https://beta.openai.com/account/api-keys).
 </font>
 
 ***
@@ -93,8 +93,8 @@ then
 
  then    
      
-     wget -qO- https://Hishantik.github.io/dekuai-cli-ppa/KEY.gpg | sudo tee /etc/apt/trusted.gpg.d/dekuai-cli.asc
-     wget -qO- https://Hishantik.github.io/dekuai-cli-ppa/dekuai-cli-debian.list | sudo tee /etc/apt/sources.list.d/dekuai-cli-debian.list
+     wget -qO- https://hishantik.github.io/dekuai-cli-ppa/KEY.gpg | sudo tee /etc/apt/trusted.gpg.d/dekuai-cli.asc
+     wget -qO- https://hishantik.github.io/dekuai-cli-ppa/dekuai-cli-debian.list | sudo tee /etc/apt/sources.list.d/dekuai-cli-debian.list
      sudo apt update
      sudo apt install dekuai-cli
     

@@ -90,7 +90,7 @@ p{
   z-index: 100;
   position: absolute;
   background-image: url(http://www.transparenttextures.com/patterns/dark-denim.png);
-  top: 150px;
+  top: 170px;
   color: #2D6A4F;
   font-family: Kodchasan;
   padding:20px;
@@ -103,7 +103,7 @@ p{
   font-size: 13px;
   position: absolute;
   background-image: url(http://www.transparenttextures.com/patterns/dark-denim.png);
-  top: 570px;
+  top: 590px;
   color: #2D6A4F;
   font-family: Kodchasan;
   padding:20px;
@@ -119,7 +119,7 @@ p{
 
   .demo{
     position: absolute;
-    top: 370px;
+    top: 390px;
     z-index: 100;
   }
 
