@@ -78,25 +78,32 @@ Install termux [(guide)](https://termux.dev/en/)
 </font>
 
 **Termux package**
- 
-    pkg install curl -y
+
+```shell
+pkg install curl -y
+``` 
 
 then
-    
-    curl -sS https://raw.githubusercontent.com/Hishantik/OpenAI-shell-cli/main/install.sh -o install && bash install && rm install
+
+```shell
+curl -sS https://raw.githubusercontent.com/Hishantik/OpenAI-shell-cli/main/install.sh -o install && bash install && rm install
+```
 
 ## Linux
 #### Debian
-    
-     sudo apt update
-     sudo apt install wget
+```shell
+ sudo apt update
+ sudo apt install wget
+```   
 
  then    
-     
-     wget -qO- https://hishantik.github.io/dekuai-cli-ppa/KEY.gpg | sudo tee /etc/apt/trusted.gpg.d/dekuai-cli.asc
-     wget -qO- https://hishantik.github.io/dekuai-cli-ppa/dekuai-cli-debian.list | sudo tee /etc/apt/sources.list.d/dekuai-cli-debian.list
-     sudo apt update
-     sudo apt install dekuai-cli
+
+ ```shell
+ wget -qO- https://hishantik.github.io/dekuai-cli-ppa/KEY.gpg | sudo tee /etc/apt/trusted.gpg.d/dekuai-cli.asc
+ wget -qO- https://hishantik.github.io/dekuai-cli-ppa/dekuai-cli-debian.list | sudo tee /etc/apt/sources.list.d/dekuai-cli-debian.list
+ sudo apt update
+ sudo apt install dekuai-cli
+ ```    
     
 ## macOS
 
@@ -108,15 +115,17 @@ Install [Homebrew](https://docs.brew.sh/Installation) if not installed.
 
 To install dependencies required on macOS using homebrew run :
 </font>
- 
-    brew install curl awk jq git
+ ```shell
+ brew install curl awk jq git
+ ```
 
 then from source
-   
-    git clone "https://github.com/Hoshantik/openAI-shell-cli" && cd ./openAI-shell-cli
-    mv ./dekuai.sh "$(brew --prefix)"/bin/dekuai
-    chmod +x "$(brew --prefix)/bin/dekuai"
-
+ ```shell
+ git clone "https://github.com/Hoshantik/openAI-shell-cli" && cd ./openAI-shell-cli
+ mv ./dekuai.sh "$(brew --prefix)"/bin/dekuai
+ chmod +x "$(brew --prefix)/bin/dekuai"
+   ```
+  
 
 ## Windows
 
@@ -125,15 +134,18 @@ then from source
 To make it work with Windows you must install and configure WSL with debian based linux (ubuntu) in windows after complete installation of wsl 
 run below command on shell
 </font>
-
-      apt-get upgrade && apt-get update
-      apt-get install git curl jq 
+```shell
+ apt-get upgrade && apt-get update
+ apt-get install git curl jq 
+```
 
 then from source
 
-      git clone "https://github.com/Hoshantik/openAI-shell-cli" && cd ./openAI-shell-cli
-      mv ./dekuai.sh "$(brew --prefix)"/bin/dekuai
-      chmod +x "$(brew --prefix)/bin/dekuai"
+```shell
+ git clone "https://github.com/Hoshantik/openAI-shell-cli" && cd ./openAI-shell-cli
+ mv ./dekuai.sh "$(brew --prefix)"/bin/dekuai
+ chmod +x "$(brew --prefix)/bin/dekuai"
+```
  
      
      
@@ -147,8 +159,23 @@ Simply run **dekuai** anywhere in the shell prompt
 
 </font>
 
-    dekuai
-    
+```
+ dekuai
+```
+<font size=4>
+
+<details>
+<summary>Keybinds</summary>
+
+|   binds    |    description   |
+|------------|------------------|
+|    <kbd>-v</kbd>       |shows current version|
+|<kbd>-h</kbd>|shows help text|
+|<kbd>-U</kbd>|update to newest version available|
+|<kbd>-u</kbd>|To uninstall the cli|
+
+</details>
+</font>
 
 ***
 ### **Uninstall**
@@ -159,7 +186,9 @@ To uninstall ***(DekuAI)*** run below command in the shell prompt
 
 </font>
     
-    dekuai -u
+```
+ dekuai -u
+```
 
 ***
 
@@ -192,7 +221,8 @@ If you have any questions regarding the project , [**join our discord server**](
 ***
 
 ### License
-    
+
+ ```   
     copyright © 2022 DekuAI open source project
 
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -202,7 +232,7 @@ If you have any questions regarding the project , [**join our discord server**](
     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
-
+```
 
 ***
 
