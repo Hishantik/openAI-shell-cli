@@ -111,9 +111,13 @@ while $running; do
                 -d '{
                         "model": "text-davinci-003",
                         "prompt": "'"${input}"'",
-                        "max_tokens": 1000,
-                        "temperature": 0.7
-            }' | jq -r '.choices[].text' | awk '{ printf "%s", $0 }') 
+                        "max_tokens": 4000,
+                        "temperature": 0.7,
+                        "best_of":1,
+                        "top_p":1,
+                        "frequency_penalty": 0.81,
+                        "presence_penalty": 0.86
+            }' | jq -M -r '.choices[].text|gsub("\\\\n";"\n")' | awk '{ printf "%s\n", $0 }') 
            echo -e "\n\033[0;36mDekuAI : \033[1;33m${response}"
     fi
   fi
