@@ -93,8 +93,8 @@ done
 echo -e "\033[0;36mWelcome to DekuAI. You can quit with \033[1;33m'exit'\033[0;36m & clear screen with \033[1;33m'clear'."
 running=true
 while $running; do
-  echo -en "\n \033[0;36mAsk :\033[1;32m "
-  read input
+  echo -e -n "\n \033[0;36mAsk :\033[1;32m "
+  read input 
   tput civis
   if [ "$input" == "exit" ]; then
     running=false
