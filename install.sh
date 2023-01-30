@@ -7,8 +7,8 @@ then
 else
   if type apt &/dev/null
   then
-        apt update && apt upgrade
-        apt install curl
+        sudo apt update && apt upgrade
+         sudo apt install curl
   else
     if type pkg &/dev/null
     then 
@@ -25,23 +25,23 @@ if type jq &>/dev/null
 then
         echo "" &>/dev/null
 else
-        apt install jq
+       sudo apt install jq
 fi
 
-curl -sS https://raw.githubusercontent.com/Hishantik/openAI-shell-cli/main/dekuai.sh -o /usr/bin/dekuai
+sudo curl -sS https://raw.githubusercontent.com/Hishantik/openAI-shell-cli/main/dekuai.sh -o ~/.local/bin/dekuai
 
-chmod +x /usr/bin/dekuai
+sudo chmod +x ~/.local/bin/dekuai
 
 echo -n "Please enter your OpenAI API key (you can one get from https://https://openai.com/account/api-keys): "
 read token
 
 if [ -f ~/.zshrc ]; then
   echo "export OPENAI_TOKEN=$token" >> ~/.zshrc
-  echo "export PATH=$PATH:/usr/bin/" >> ~/.zshrc
+  echo "export PATH=$PATH:~/.local/bin" >> ~/.zshrc
 else
   if [ -f ~/.bashrc ]; then
     echo "export OPENAI_TOKEN=$token" >> ~/.bashrc
-    echo "export PATH=$PATH:/usr/bin" >> ~/.bashrc
+    echo "export PATH=$PATH:~/.local/bin" >> ~/.bashrc
   else
     export OPENAI_TOKEN=$token
     echo "You need to add this to your shell profile: export OPENAI_TOKEN=$token"
