@@ -28,17 +28,16 @@ else
         apt install jq
 fi
 
-curl -sS https://raw.githubusercontent.com/Hishantik/openAI-shell-cli/main/dekuai.sh -o ~/../usr/bin/dekuai
+curl -sS https://raw.githubusercontent.com/Hishantik/openAI-shell-cli/main/dekuai.sh -o /usr/bin/dekuai
 
-
-chmod +x ~/../usr/bin/dekuai
+chmod +x /usr/bin/dekuai
 
 echo -n "Please enter your OpenAI API key (you can one get from https://https://openai.com/account/api-keys): "
 read token
 
 if [ -f ~/.zshrc ]; then
   echo "export OPENAI_TOKEN=$token" >> ~/.zshrc
-  echo "export PATH=$PATH:/usr/bin" >> ~/.zshrc
+  echo "export PATH=$PATH:/usr/bin/" >> ~/.zshrc
 else
   if [ -f ~/.bashrc ]; then
     echo "export OPENAI_TOKEN=$token" >> ~/.bashrc
