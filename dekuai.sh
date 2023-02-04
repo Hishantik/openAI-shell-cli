@@ -1,8 +1,7 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 
-
-VERSION="1.1.0"
+VERSION="1.2.3"
 
 
 
@@ -61,16 +60,7 @@ version (){
 }
 
 loading(){
-        echo -ne '           processing —————                      [20%]\r'
-        sleep 0.5
-        echo -ne '           processing —————————                  [40%]\r'
-        sleep 0.5
-        echo -ne '           processing ——————————————             [60%]\r'
-        sleep 0.5
-        echo -ne '           processing ————————————————————       [80%]\r'
-        sleep 0.5
-        echo -ne '           processing —————————————————————————— [100%]\r'
-        echo -ne '\n'
+  gum spin --spinner dot --title "loading please wait...."  --spinner.foreground "#FFB703" --title.bold -- sleep 5    
 }
 
 
@@ -90,19 +80,45 @@ while true; do
         esac
         shift
 done
+
+
 echo -e "\033[0;36mWelcome to DekuAI. You can quit with \033[1;33m'exit'\033[0;36m & clear screen with \033[1;33m'clear'."
+HEADER=$(gum style\
+  --border rounded --border-foreground "#2EC4BC" --foreground "#D9ED92"\
+  --align center --width 50 --margin "1 20" --padding "2 4" --bold\
+  "Welcome to DekuAI" 'You can type press esc to quit & clear to clear screen.')
 running=true
 while $running; do
-  echo -e -n "\n \033[0;36mAsk :\033[1;32m "
-  read input 
-  tput civis
-  if [ "$input" == "exit" ]; then
+
+  # QUESTION=$(gum input --prompt.foreground "#2C666E" --prompt "Ask me : " \
+  #   --prompt.align center --prompt.underline\
+  #   --placeholder "What is machine learning?"\
+  #   --cursor.foreground "#FFB703" --cursor.bold\
+  #   --char-limit 0 
+  # )
+  ASK=$(gum style --foreground "#2C666E" "ASK : " --bold )
+  echo -e "\n\n $ASK"
+  QUESTION=$(gum write\
+    --char-limit 0 --base.border rounded --base.align left\
+    --prompt "  "  --placeholder "Type your questions here......"\
+    --cursor.foreground "#FFB703" --cursor.background "#FFB703" --cursor.bold --base.border-foreground '#FFC300'\
+    --base.margin "1 0" --base.width 50 --placeholder.bold --placeholder.width 50)
+
+
+
+  if [ -z "$QUESTION" ]; then
     running=false
+    gum style \
+      --border rounded --border-foreground "#EF233C" --background "#EF233C"\
+      --foreground "#FFFFFF" "Bye have a great day!!"
     exit 0
   else
-    if [ "$input" == "clear" ]; then
+    if [ "$QUESTION" == "clear" ]; then
       clear
     else
+            sleep 0.5; clear
+            gum style \
+              --border rounded "$QUESTION"
             loading &
             response=$(curl https://api.openai.com/v1/completions \
                   -sS \
@@ -110,16 +126,16 @@ while $running; do
                 -H "Authorization: Bearer $OPENAI_TOKEN" \
                 -d '{
                         "model": "text-davinci-003",
-                        "prompt": "'"${input}"'",
+                        "prompt": "'"${QUESTION}"'",
                         "max_tokens": 4000,
                         "temperature": 0.7,
                         "best_of":1,
                         "top_p":1,
                         "frequency_penalty": 0.81,
-                        "presence_penalty": 0.86
+                        "presence_penalty": 0.8
             }' | jq -M -r '.choices[].text|gsub("\\\\n";"\n")' | awk '{ printf "%s\n", $0 }') 
-           echo -e "\n\033[0;36mDekuAI : \033[1;33m${response}"
+            # echo -e "$response"|gum format -t code  
+            gum pager<dekuai.sh
     fi
   fi
-  tput cnorm
 done
