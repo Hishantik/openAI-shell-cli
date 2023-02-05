@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 
 VERSION="1.2.3"
@@ -39,6 +39,14 @@ uninstall(){
   rm "$0"
 }
 
+option(){
+  OPTION=$(gum choose --cursor "😎👉 " --cursor.foreground "#FCA311" --selected.foreground "#8AC926" --limit 1 {"help","version"})
+  case "$OPTION" in
+    "help") usage && option;;
+    "version") version && option;;
+  esac  
+}
+
 update () {
         update="$(curl  -sS "https://raw.githubusercontent.com/Hishantik/openAI-shell-cli/main/dekuai.sh")" || die "Connection error"
         update="$(printf '%s\n' "$update" | diff -u "$0" -)"
@@ -60,17 +68,29 @@ version (){
 }
 
 loading(){
-  gum spin --spinner dot --title "loading please wait...."  --spinner.foreground "#FFB703" --title.bold -- sleep 5    
+  while kill -0 "$pid" 2> /dev/null; do
+    gum spin --spinner dot --title "loading please wait...."  --spinner.foreground "#B5E48C" --title.bold -- sleep 5    
+  done
 }
 
 
-OPT=$(getopt -o vuUh -l version,update,help,uninstall --n "$0" -- "$@")
+quit(){
+  running=false
+  gum style \
+    --border rounded --padding "0 1" --border-foreground "#EF233C" --background "#EF233C"\
+    --foreground "#FFFFFF" "😇 Bye have a great day!!"
+  exit 0
+}
+
+
+OPT=$(getopt -o ovuUh -l options,version,update,help,uninstall --n "$0" -- "$@")
 
 eval set -- "$OPT"
 unset OPT
 
 while true; do
         case $1 in
+        -o | --options) option && exit 0;;
         -v | --version) version && exit 0 ;;
         -u | --uninstall) uninstall && exit 0;;
         -U | --update) update &&  exit 0 ;;
@@ -82,21 +102,17 @@ while true; do
 done
 
 
-echo -e "\033[0;36mWelcome to DekuAI. You can quit with \033[1;33m'exit'\033[0;36m & clear screen with \033[1;33m'clear'."
-HEADER=$(gum style\
+CTRL=$(gum style\
+  --foreground "#D5BDAF" "(Press ctrl+d to $(gum style --foreground "#588157" "Enter"))"
+)
+
+gum style\
   --border rounded --border-foreground "#2EC4BC" --foreground "#D9ED92"\
-  --align center --width 50 --margin "1 20" --padding "2 4" --bold\
-  "Welcome to DekuAI" 'You can type press esc to quit & clear to clear screen.')
+  --align center --width 50  --padding "1 3" --bold\
+  "Welcome to DekuAI" 'You can type press esc to quit & type clear to clear screen.'
 running=true
 while $running; do
-
-  # QUESTION=$(gum input --prompt.foreground "#2C666E" --prompt "Ask me : " \
-  #   --prompt.align center --prompt.underline\
-  #   --placeholder "What is machine learning?"\
-  #   --cursor.foreground "#FFB703" --cursor.bold\
-  #   --char-limit 0 
-  # )
-  ASK=$(gum style --foreground "#2C666E" "ASK : " --bold )
+  ASK=$(gum style --foreground "#2C666E" --bold "ASK : $(gum style --foreground "#FFFFFF" --faint "(Press ctrl+d to $(gum style --foreground "#FF0054" --bold "Enter"))")")
   echo -e "\n\n $ASK"
   QUESTION=$(gum write\
     --char-limit 0 --base.border rounded --base.align left\
@@ -104,23 +120,22 @@ while $running; do
     --cursor.foreground "#FFB703" --cursor.background "#FFB703" --cursor.bold --base.border-foreground '#FFC300'\
     --base.margin "1 0" --base.width 50 --placeholder.bold --placeholder.width 50)
 
-
+   sleep 0.5; clear
+   QUE=$(gum style \
+     --border rounded "Q. $QUESTION"\
+     --bold\
+     --border-foreground "#FFB703" --foreground "#00AFB9" --padding "0 1"
+ )
+  
 
   if [ -z "$QUESTION" ]; then
-    running=false
-    gum style \
-      --border rounded --border-foreground "#EF233C" --background "#EF233C"\
-      --foreground "#FFFFFF" "Bye have a great day!!"
-    exit 0
+    gum confirm --selected.background "#007F5F" "Are you sure you want to quit?" && quit || continue  
   else
-    if [ "$QUESTION" == "clear" ]; then
+    if [ "$QUESTION" = "clear" ]; then
       clear
     else
-            sleep 0.5; clear
-            gum style \
-              --border rounded "$QUESTION"
-            loading &
-            response=$(curl https://api.openai.com/v1/completions \
+           RESPONSE=" "
+           curl https://api.openai.com/v1/completions \
                   -sS \
                 -H 'Content-Type: application/json' \
                 -H "Authorization: Bearer $OPENAI_TOKEN" \
@@ -133,9 +148,14 @@ while $running; do
                         "top_p":1,
                         "frequency_penalty": 0.81,
                         "presence_penalty": 0.8
-            }' | jq -M -r '.choices[].text|gsub("\\\\n";"\n")' | awk '{ printf "%s\n", $0 }') 
-            # echo -e "$response"|gum format -t code  
-            gum pager<dekuai.sh
+            }' | jq -M -r '.choices[].text|gsub("\\\\n";"\n")' | awk '{ printf "%s\n", $0 }' > ~/.local/answers.txt &
+            pid=$!
+            loading
+            RESPONSE=$(cat ~/.local/answers.txt)
+            echo -e "DekuAI 😄 : $RESPONSE" > ~/.local/answers.txt 
+            OUTPUT=$(gum style --foreground "#83C5BE" "$(gum format < ~/.local/answers.txt -t code)")
+            gum style \
+            --width 70 --padding "0 3"  --border thick --foreground "#83C5BE" --border-foreground "#EF233C"  "${QUE}" "${OUTPUT}"
     fi
   fi
 done
