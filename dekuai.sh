@@ -23,16 +23,18 @@ EOF
 
 
 error () {
-  printf "\33[2K\r\033[1;31m%s\033[0m\n" "$*" >&2
+  gum style --foreground "#FFFFFF" --background "#D90429" "$*" >&2
 }
 
-quit () {
-    err "$*"
+exiting () {
+    error "$*"
     exit 1                                                                                                                                                                                 
 }
 
 info () {
-  printf "\33[2K\r\033[1;33m%s \033[1;35m%s\033[0m\n" "$1" "$2"                           
+  gum style --border rounded --border-foreground "#1B998B" --foreground "#F6AA1C"  --bold  \
+    --padding "1 1 0 1" --margin "1 1"\
+    "$1" "$2"                           
 }
 
 uninstall(){
@@ -40,7 +42,7 @@ uninstall(){
 }
 
 option(){
-  OPTION=$(gum choose --cursor "😎👉 " --cursor.foreground "#FCA311" --selected.foreground "#8AC926" --limit 1 {"help","version"})
+  OPTION=$(gum choose --cursor "📌 " --cursor.foreground "#FCA311" --selected.foreground "#8AC926" --limit 1 {"help","version"})
   case "$OPTION" in
     "help") usage && option;;
     "version") version && option;;
@@ -56,20 +58,27 @@ update () {
                 if printf '%s\n' "$update" | patch "$0" - ; then
                         info "DekuAI has been updated"
                 else
-                        quit "Can't update for some reason!"                                                     
-                  fi
+                  exiting "Can't update for some reason!"                                                     
+                fi
         fi
         exit 0
 }
 
 
+
+spinner(){
+    gum spin --spinner dot --title "$1"  --spinner.foreground "#B5E48C" --title.bold --title.foreground "#2EC4BC"  -- sleep 3    
+}
+
 version (){
-   info "Version : $VERSION"
+  sleep 1;clear
+   spinner "loading please wait"
+   info "💡 Version : $VERSION"
 }
 
 loading(){
   while kill -0 "$pid" 2> /dev/null; do
-    gum spin --spinner dot --title "loading please wait...."  --spinner.foreground "#B5E48C" --title.bold -- sleep 5    
+    gum spin --spinner points --title "loading please wait...."  --spinner.foreground "#B5E48C" --title.bold -- sleep 5    
   done
 }
 
@@ -134,6 +143,9 @@ while $running; do
     if [ "$QUESTION" = "clear" ]; then
       clear
     else
+      if [ "$QUESTION" = "options" ]; then
+         option
+       else   
            RESPONSE=" "
            curl https://api.openai.com/v1/completions \
                   -sS \
@@ -156,6 +168,7 @@ while $running; do
             OUTPUT=$(gum style --foreground "#83C5BE" "$(gum format < ~/.local/answers.txt -t code)")
             gum style \
             --width 70 --padding "0 3"  --border thick --foreground "#83C5BE" --border-foreground "#EF233C"  "${QUE}" "${OUTPUT}"
+      fi
     fi
   fi
 done
