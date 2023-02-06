@@ -1,35 +1,46 @@
-#!/bin/sh
+#!/usr/bin/sh
+
+sleep 0.03;clear
 
 
-VERSION="1.2.3"
 
+############################
+### TERMINAL SCREEN SIZE ###
+###########################
+
+WIDTH=$(tput cols)
+HEIGHT=$(tput lines)
+
+
+#####################
+### HELP & USAGE ###
+###################
 
 
 usage() {
-        while read -r line; do
-                printf "\033[0;36m%s\n" "$line"
-        done <<-EOF
-
-        Usage:
-          ${0##*/} -h | -u | -v 
-
-        Options:
-          -v | --version to display current version of cli
-          -U | --update to upadte current cli to newest versiono
-          -u | --uninstall to uninstall DekuAI (might works only with android)
-          -h | --help to display this help text
-EOF
+   glow -p github.com/hishantik/openAI-shell-cli     
 }
 
+###########################
+### CUSTOM ERROR OUTPUT ##
+#########################
 
 error () {
-  gum style --foreground "#FFFFFF" --background "#D90429" "$*" >&2
+  gum style --border rounded --border-foreground "#EF233C" --foreground "#FFFFFF"  "$*" >&2
 }
+
+#####################
+## EXITING ERROR ###
+###################
 
 exiting () {
     error "$*"
     exit 1                                                                                                                                                                                 
 }
+
+######################
+#### CUSTOM OUTPUT ##
+####################
 
 info () {
   gum style --border rounded --border-foreground "#1B998B" --foreground "#F6AA1C"  --bold  \
@@ -37,17 +48,47 @@ info () {
     "$1" "$2"                           
 }
 
+
+######################
+### UNINSTALL CLI ###
+####################
+
 uninstall(){
+  spinner "monkey" "uninstalling...."
   rm "$0"
 }
 
+
+
+#################
+## CLI OPTIONS ##
+################
+
+
 option(){
-  OPTION=$(gum choose --cursor "📌 " --cursor.foreground "#FCA311" --selected.foreground "#8AC926" --limit 1 {"help","version"})
+  gum style\
+    --foreground "#1B998B" --bold "DekuAI OPTIONS :"
+  gum style\
+    --faint --margin "1 1" "press j ↑ | k ↓ • esc quit • enter  choose" & 
+  OPTION=$(gum choose --item.margin "1 0 0 3" \
+    --item.border-foreground "#1B998B" --item.border rounded --cursor "> " \
+    --cursor.background "#F6AA1C" --cursor.width 11 --cursor.align center --cursor.foreground "#001219" --cursor.bold\
+    --cursor.padding "0 1" --cursor.margin "1 0 0 3"\
+    --limit 1 "dekuai"  "help" "update" "version" "uninstall" "exit") 
   case "$OPTION" in
+    "dekuai") "$0" ;;
     "help") usage && option;;
+    "update")update && dekuai;;
     "version") version && option;;
+    "unistall") uninstall && exit 0;;
+    "exit") exit 0;;
   esac  
 }
+
+
+#################
+## UPDATE CLI ##
+###############
 
 update () {
         update="$(curl  -sS "https://raw.githubusercontent.com/Hishantik/openAI-shell-cli/main/dekuai.sh")" || die "Connection error"
@@ -66,30 +107,61 @@ update () {
 
 
 
+##########################
+## OVERLOADING SPINNER ##
+########################
+
 spinner(){
-    gum spin --spinner dot --title "$1"  --spinner.foreground "#B5E48C" --title.bold --title.foreground "#2EC4BC"  -- sleep 3    
+    gum spin --spinner "$1" --title "$2🐒"  --spinner.foreground "#F6AA1C" --title.bold --title.foreground "#1B998B"  --title.foreground "#1B998B" --title.bold \
+      --spinner.margin "1 0 0 1" -- sleep 3    
 }
+
+
+
+#################
+## CLI VERSION ##
+################
+
+VERSION="1.2.3"
 
 version (){
   sleep 1;clear
-   spinner "loading please wait"
-   info "💡 Version : $VERSION"
+   spinner "monkey" "loading please wait..."
+   info "🐒 Version : $VERSION"
 }
+
+
+######################
+## RESPONSE SPINNER ##
+#####################
 
 loading(){
   while kill -0 "$pid" 2> /dev/null; do
-    gum spin --spinner points --title "loading please wait...."  --spinner.foreground "#B5E48C" --title.bold -- sleep 5    
+    gum spin --spinner points --title "loading please wait...🐒"  --spinner.foreground "#FFB703" --title.foreground "#1B998B" --title.bold -- sleep 5    
   done
 }
 
 
+######################
+## QUITTING PROGRAM ##
+#####################
+
+
 quit(){
   running=false
+  spinner "monkey" "quitting...."
   gum style \
-    --border rounded --padding "0 1" --border-foreground "#EF233C" --background "#EF233C"\
-    --foreground "#FFFFFF" "😇 Bye have a great day!!"
+    --border rounded --padding "0 1 0 1" --margin "1 1 1 1" --border-foreground "#1B998B" --foreground "#F6AA1C"\
+     "🐒 Bye have a great day!!"
   exit 0
 }
+
+
+
+
+########################
+## COMMAND LINE ARGS ##
+######################
 
 
 OPT=$(getopt -o ovuUh -l options,version,update,help,uninstall --n "$0" -- "$@")
@@ -111,34 +183,51 @@ while true; do
 done
 
 
-CTRL=$(gum style\
-  --foreground "#D5BDAF" "(Press ctrl+d to $(gum style --foreground "#588157" "Enter"))"
-)
+
+
+
+#####################
+## MAIN GOES HERE ##
+####################
+
+
+
+####################
+## PROGRAM HEADER ##
+###################
+
 
 gum style\
-  --border rounded --border-foreground "#2EC4BC" --foreground "#D9ED92"\
-  --align center --width 50  --padding "1 3" --bold\
-  "Welcome to DekuAI" 'You can type press esc to quit & type clear to clear screen.'
+  --foreground "#1B998B" --width $WIDTH --border hidden\
+  --align center --bold "WELCOME TO $(gum style --foreground "#FFB703" "🐒 DekuAI")" \
+  "$(gum style --faint --foreground "#FFFFFF" "press esc → exit • ctrl + d → enter ")" 
+
+
+
+######################
+## PROGRAM RUNNING ##
+####################
+
 running=true
 while $running; do
-  ASK=$(gum style --foreground "#2C666E" --bold "ASK : $(gum style --foreground "#FFFFFF" --faint "(Press ctrl+d to $(gum style --foreground "#FF0054" --bold "Enter"))")")
-  echo -e "\n\n $ASK"
+  gum style --margin "1 2 0 $((($WIDTH-50)/2))" --foreground "#1B998B" --bold "ASK 🙈 : "
   QUESTION=$(gum write\
-    --char-limit 0 --base.border rounded --base.align left\
+    --char-limit 0 --base.border rounded --width 80\
     --prompt "  "  --placeholder "Type your questions here......"\
-    --cursor.foreground "#FFB703" --cursor.background "#FFB703" --cursor.bold --base.border-foreground '#FFC300'\
-    --base.margin "1 0" --base.width 50 --placeholder.bold --placeholder.width 50)
+    --cursor.foreground "#FFB703" --cursor.background "#FFB703" --cursor.bold --base.border-foreground '#1B998B'\
+    --base.margin "1 $((($WIDTH-50)/2))" --base.width 50 --base.height 7 --placeholder.bold --base.padding "1 0"\
+  )
 
    sleep 0.5; clear
    QUE=$(gum style \
-     --border rounded "Q. $QUESTION"\
-     --bold\
-     --border-foreground "#FFB703" --foreground "#00AFB9" --padding "0 1"
+     --border rounded "🙉. $QUESTION"\
+     --bold --width 2 --height 1\
+     --border-foreground "#FFB703" --foreground "#1B998B" --padding "0 1"
  )
   
 
   if [ -z "$QUESTION" ]; then
-    gum confirm --selected.background "#007F5F" "Are you sure you want to quit?" && quit || continue  
+    gum confirm --prompt.margin "2 0 0 2" --selected.background "#1B998B" --prompt.foreground "# F6AA1C" "🐒 Are you sure you want to quit?" && quit || continue  
   else
     if [ "$QUESTION" = "clear" ]; then
       clear
@@ -147,27 +236,55 @@ while $running; do
          option
        else   
            RESPONSE=" "
-           curl https://api.openai.com/v1/completions \
-                  -sS \
-                -H 'Content-Type: application/json' \
-                -H "Authorization: Bearer $OPENAI_TOKEN" \
-                -d '{
-                        "model": "text-davinci-003",
-                        "prompt": "'"${QUESTION}"'",
-                        "max_tokens": 4000,
-                        "temperature": 0.7,
-                        "best_of":1,
-                        "top_p":1,
-                        "frequency_penalty": 0.81,
-                        "presence_penalty": 0.8
-            }' | jq -M -r '.choices[].text|gsub("\\\\n";"\n")' | awk '{ printf "%s\n", $0 }' > ~/.local/answers.txt &
+           #Check whether the user inputlenght is long or short
+           MAX_INPUT_LENGTH=1024
+           INPUT_CHUNK_SIZE=512
+           #dividing input into chunks of word according to input chuk size
+           if [ ${#QUESTION} -gt $MAX_INPUT_LENGTH ];then
+              QUESTION=$(echo "User input is too long...")
+              for i in $(seq 0 $INPUT_CHUNK_SIZE $((${#QUESTION}-1)));do
+                CHUNK=${QUESTION:$i:$INPUT_CHUNK_SIZE}
+                curl https://api.openai.com/v1/completions \
+                      -sS \
+                      -H 'Content-Type: application/json' \
+                      -H "Authorization: Bearer $OPENAI_TOKEN" \
+                      -d '{
+                              "model": "text-davinci-003",
+                              "prompt": "'"${CHUNK}"'",
+                              "max_tokens": 3048,
+                              "temperature": 0.7,
+                              "best_of":1,
+                              "top_p":1,
+                              "frequency_penalty": 0.81,
+                              "presence_penalty": 0.8
+                  }' | jq -M -r '.choices[].text|gsub("\\\\n";"\n")' | awk '{ printf "%s\n", $0 }' >> ~/.local/answers.txt 
+              done
+            else    
+              #if user input length is not too long ....
+               QUESTION=$(echo "$QUESTION" | grep -v '^ *$' |tr '\n' ' ')
+               curl https://api.openai.com/v1/completions \
+                        -sS \
+                        -H 'Content-Type: application/json' \
+                        -H "Authorization: Bearer $OPENAI_TOKEN" \
+                        -d '{
+                                "model": "text-davinci-003",
+                                "prompt": "'"${QUESTION}"'",
+                                "max_tokens": 3048,
+                                "temperature": 0.7,
+                                "best_of":1,
+                                "top_p":1,
+                                "frequency_penalty": 0.81,
+                                "presence_penalty": 0.8
+               }' | jq -M -r '.choices[].text|gsub("\\\\n";"\n")' | awk '{ printf "%s\n", $0 }' > ~/.local/answers.txt 
+            fi &
             pid=$!
             loading
             RESPONSE=$(cat ~/.local/answers.txt)
-            echo -e "DekuAI 😄 : $RESPONSE" > ~/.local/answers.txt 
-            OUTPUT=$(gum style --foreground "#83C5BE" "$(gum format < ~/.local/answers.txt -t code)")
+            echo  "DekuAI 🐵 : $RESPONSE" > ~/.local/answers.txt 
+            OUTPUT=$(gum style --foreground "#83C5BE" "$(gum format --theme notty< ~/.local/answers.txt)")
             gum style \
-            --width 70 --padding "0 3"  --border thick --foreground "#83C5BE" --border-foreground "#EF233C"  "${QUE}" "${OUTPUT}"
+              --width $(($WIDTH-10)) --foreground "#83C5BE" --padding "1 4 2 4" --margin "0 0 0 5"  --border thick  --border-foreground "#1B998B"  "${QUE}" "${OUTPUT}"
+            gum confirm --selected.margin "1 1 1 4" --unselected.margin "1 1 1 4" --prompt.margin "2 0 0 4" --selected.background "#1B998B" --prompt.foreground "# F6AA1C" "🐒 Next Question?" && continue || quit  
       fi
     fi
   fi
