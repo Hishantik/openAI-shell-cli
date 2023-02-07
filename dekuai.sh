@@ -3,7 +3,6 @@
 sleep 0.03;clear
 
 
-
 ############################
 ### TERMINAL SCREEN SIZE ###
 ###########################
@@ -18,7 +17,7 @@ HEIGHT=$(tput lines)
 
 
 usage() {
-   glow -p github.com/hishantik/openAI-shell-cli     
+   glow -p github.com/hishantik/openAI-shell-cli || error "connection error...."     
 }
 
 ###########################
@@ -26,7 +25,7 @@ usage() {
 #########################
 
 error () {
-  gum style --border rounded --border-foreground "#EF233C" --foreground "#FFFFFF"  "$*" >&2
+  gum style --border rounded --border-foreground "#EF233C" --foreground "#FFFFFF"  "$*🙊" >&2
 }
 
 #####################
@@ -58,6 +57,71 @@ uninstall(){
   rm "$0"
 }
 
+#################
+### LOGIN ######
+################
+
+
+provideToken(){
+  clear
+  gum style\
+  --foreground "#1B998B" --width $WIDTH --border hidden\
+  --align center --bold "WELCOME TO $(gum style --foreground "#FFB703" "🐒 DekuAI") LOGIN SECTION" \
+  "$(gum style --faint --foreground "#FFFFFF" "Visit 👉 https://github.com/hishantik/openAI-shell-cli")" 
+
+  gum style\
+    --border rounded --border-foreground "#1B998B"\
+    --foreground "#F6AA1C" --align center  --width 18\
+    --bold "LOGIN" --padding "0 0" --margin "1 $((($WIDTH-14)/2))"
+
+  TOKEN=$(gum input --cursor.foreground "#F6AA1C" --prompt.foreground "#1B998B"\
+   --prompt.margin "0 1 0 5"  --prompt "Enter your openai token 🙈" --password --placeholder " openai token"
+  )
+  if [ -z "$TOKEN" ];then
+    echo "" &> /dev/null
+  else
+    if [ -n "$1" ]; then
+      if [ -f $HOME/.zshrc ]; then 
+       sed -i '/OPENAI_TOKEN/c\export OPENAI_TOKEN=$TOKEN' $HOME/.zshrc
+      else
+        if [ -f $HOME/.bashrc ]; then
+          sed -i '/OPENAI_TOKEN/c\export OPENAI_TOKEN=$TOKEN' $HOME/.bashrc
+        else
+          sed -i '/OPENAI_TOKEN/c\export OPENAI_TOKEN=$TOKEN' $HOME/.profile
+        fi
+      fi
+    else
+      if [ -f $HOME/.zshrc ]; then 
+        echo "export OPENAI_TOKEN=$TOKEN" >> $HOME/.zshrc
+        source $HOME/.zshrc
+      else
+        if [ -f $HOME/.bashrc ]; then
+          echo "export OPENAI_TOKEN=$TOKEN" >> ~/.bashrc
+          source $HOME/.bashrc
+        else
+          echo "export OPENAI_TOKEN=$TOKEN" >> ~/.profile
+          source $HOME/.profile
+        fi
+      fi
+    fi
+  fi
+  sleep 0.5; clear
+}
+
+
+######################
+#### CHECK TOKEN ####
+#####################
+
+checktoken(){
+  result=$(grep "OPENAI_TOKEN" $HOME/.zshrc)
+  if [ -n "$result" ]; then
+    echo "" &> /dev/null
+  else
+    gum style --foreground "Sorry could not find openai token.Please provide one."
+    provideToken $result
+  fi
+}
 
 
 #################
@@ -71,17 +135,18 @@ option(){
   gum style\
     --faint --margin "1 1" "press j ↑ | k ↓ • esc quit • enter  choose" & 
   OPTION=$(gum choose --item.margin "1 0 0 3" \
-    --item.border-foreground "#1B998B" --item.border rounded --cursor "> " \
-    --cursor.background "#F6AA1C" --cursor.width 11 --cursor.align center --cursor.foreground "#001219" --cursor.bold\
+    --item.border-foreground "#1B998B" --item.align center --item.width 11 --item.border rounded --cursor "> " \
+    --cursor.background "#F6AA1C" --cursor.width 13 --cursor.align center --cursor.foreground "#001219" --cursor.bold\
     --cursor.padding "0 1" --cursor.margin "1 0 0 3"\
-    --limit 1 "dekuai"  "help" "update" "version" "uninstall" "exit") 
+    --limit 1 "dekuai"  "help" "update" "version" "login" "uninstall" "exit") 
   case "$OPTION" in
     "dekuai") "$0" ;;
     "help") usage && option;;
     "update")update && dekuai;;
     "version") version && option;;
+    "login") provideToken && option;;
     "unistall") uninstall && exit 0;;
-    "exit") exit 0;;
+    "exit") quit ;;
   esac  
 }
 
@@ -91,7 +156,7 @@ option(){
 ###############
 
 update () {
-        update="$(curl  -sS "https://raw.githubusercontent.com/Hishantik/openAI-shell-cli/main/dekuai.sh")" || die "Connection error"
+        update="$(curl  -fsSL "https://raw.githubusercontent.com/Hishantik/openAI-shell-cli/main/dekuai.sh")" || error "Connection error..."
         update="$(printf '%s\n' "$update" | diff -u "$0" -)"
         if [ -z "$update" ]; then
                 info "DekuAI is up to date :)"
@@ -196,6 +261,9 @@ done
 ## PROGRAM HEADER ##
 ###################
 
+#first checks for token if it is available  in rc  file o r not
+
+checktoken
 
 gum style\
   --foreground "#1B998B" --width $WIDTH --border hidden\
