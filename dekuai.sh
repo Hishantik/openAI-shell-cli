@@ -9,7 +9,7 @@ sleep 0.03;clear
 
 WIDTH=$(tput cols)
 HEIGHT=$(tput lines)
-
+SYSTEM=$(uname -o)
 
 #####################
 ### HELP & USAGE ###
@@ -53,8 +53,12 @@ info () {
 ####################
 
 uninstall(){
-  spinner "monkey" "uninstalling...."
-  rm "$0"
+  spinner "monkey" "Uninstalling DekuAI...."
+  case  "$SYSTEM" in
+    "Android" ) rm $"0" && exit 0;;
+    "GNU/Linux" ) sudo rm $"0" && exit 0;;
+    "Darwin" ) sudo rm $"0" && exit 0;;
+  esac
 }
 
 #################
@@ -66,13 +70,13 @@ provideToken(){
   clear
   gum style\
   --foreground "#1B998B" --width $WIDTH --border hidden\
-  --align center --bold "WELCOME TO $(gum style --foreground "#FFB703" "🐒 DekuAI") LOGIN SECTION" \
+  --align center --bold "WELCOME TO $(gum style --foreground "#FFB703" "🐒 DekuAI") $(gum style --foreground "#FFFFFF" "LOGIN SECTION")" \
   "$(gum style --faint --foreground "#FFFFFF" "Visit 👉 https://github.com/hishantik/openAI-shell-cli")" 
 
   gum style\
-    --border rounded --border-foreground "#1B998B"\
-    --foreground "#F6AA1C" --align center  --width 18\
-    --bold "LOGIN" --padding "0 0" --margin "1 $((($WIDTH-14)/2))"
+    --border thick --border-foreground "#1B998B"\
+    --foreground "#F6AA1C" --align center  --width 18 --height 1\
+    --bold "LOGIN" --padding "0 0" --margin "1 $((($WIDTH-18)/2))"
 
   TOKEN=$(gum input --cursor.foreground "#F6AA1C" --prompt.foreground "#1B998B"\
    --prompt.margin "0 1 0 5"  --prompt "Enter your openai token 🙈" --password --placeholder " openai token"
@@ -96,10 +100,10 @@ provideToken(){
         source $HOME/.zshrc
       else
         if [ -f $HOME/.bashrc ]; then
-          echo "export OPENAI_TOKEN=$TOKEN" >> ~/.bashrc
+          echo "export OPENAI_TOKEN=$TOKEN" >> $HOME/.bashrc
           source $HOME/.bashrc
         else
-          echo "export OPENAI_TOKEN=$TOKEN" >> ~/.profile
+          echo "export OPENAI_TOKEN=$TOKEN" >> $HOME/.profile
           source $HOME/.profile
         fi
       fi
@@ -110,8 +114,8 @@ provideToken(){
 
 
 ######################
-#### CHECK TOKEN ####
-#####################
+#### CHECK TOKEN #####
+######################
 
 checktoken(){
   result=$(grep "OPENAI_TOKEN" $HOME/.zshrc)
@@ -126,14 +130,14 @@ checktoken(){
 
 #################
 ## CLI OPTIONS ##
-################
+#################
 
 
 option(){
   gum style\
     --foreground "#1B998B" --bold "DekuAI OPTIONS :"
   gum style\
-    --faint --margin "1 1" "press j ↑ | k ↓ • esc quit • enter  choose" & 
+    --faint --foreground "#E5E5E5" --margin "1 1" "press j ↑ | k ↓ • esc quit • enter  choose" & 
   OPTION=$(gum choose --item.margin "1 0 0 3" \
     --item.border-foreground "#1B998B" --item.align center --item.width 11 --item.border rounded --cursor "> " \
     --cursor.background "#F6AA1C" --cursor.width 13 --cursor.align center --cursor.foreground "#001219" --cursor.bold\
@@ -280,7 +284,7 @@ running=true
 while $running; do
   gum style --margin "1 2 0 $((($WIDTH-50)/2))" --foreground "#1B998B" --bold "ASK 🙈 : "
   QUESTION=$(gum write\
-    --char-limit 0 --base.border rounded --width 80\
+    --char-limit 0 --base.border rounded --width $WIDTH --base.padding "0 3"\
     --prompt "  "  --placeholder "Type your questions here......"\
     --cursor.foreground "#FFB703" --cursor.background "#FFB703" --cursor.bold --base.border-foreground '#1B998B'\
     --base.margin "1 $((($WIDTH-50)/2))" --base.width 50 --base.height 7 --placeholder.bold --base.padding "1 0"\
