@@ -346,17 +346,17 @@ done
 ### HANDLING RESPONSE ####
 ##########################
 
-handleresponse(){
-  if [ -z "$1" ]; then
-    return 1
-  else
-    if [ $2 -eq 1 ]; then
-      echo "$1" | jq -M -r '.choices[].text|gsub("\\\\n";"\n")' | awk '{ printf "%s\n", $0 }' > $HOME/.local/dekuai/answers.txt 
-    else
-      echo "$1" | jq -M -r '.choices[].text|gsub("\\\\n";"\n")' | awk '{ printf "%s\n", $0 }' >> $HOME/.local/dekuai/answers.txt 
-    fi
-  fi
-}
+# handleresponse(){
+#   if [ -z "$1" ]; then
+#     return 1
+#   else
+#     if [ $2 -eq 1 ]; then
+#       echo "$1" | jq -M -r '.choices[].text|gsub("\\\\n";"\n")' | awk '{ printf "%s\n", $0 }' > $HOME/.local/dekuai/answers.txt 
+#     else
+#       echo "$1" | jq -M -r '.choices[].text|gsub("\\\\n";"\n")' | awk '{ printf "%s\n", $0 }' >> $HOME/.local/dekuai/answers.txt 
+#     fi
+#   fi
+# }
 
 
 
@@ -426,7 +426,7 @@ while $running; do
               QUESTION=$(echo "User input is too long...")
               for i in $(seq 0 $INPUT_CHUNK_SIZE $((${#QUESTION}-1)));do
                 CHUNK=${QUESTION:$i:$INPUT_CHUNK_SIZE}
-                RESPONSE=$(curl https://api.openai.com/v1/completions \
+                curl https://api.openai.com/v1/completions \
                       -sS \
                       -H 'Content-Type: application/json' \
                       -H "Authorization: Bearer $OPENAI_TOKEN" \
@@ -439,25 +439,13 @@ while $running; do
                               "top_p":1,
                               "frequency_penalty": 0.81,
                               "presence_penalty": 0.8
-                            }') 
-                        handleresponse "$RESPONSE" 2
-                        STATUS=$?
-                        if [ $STATUS -eq 0 ]; then
-                           echo "" &> /dev/null     
-                        else
-                           break
-                        fi
+                            }' | jq -M -r '.choices[].text|gsub("\\\\n";"\n")' | awk '{ printf "%s\n", $0 }' >> $HOME/.local/dekuai/answers.txt 
+
                 done
-                if [$STATUS -eq 0]; then
-                  echo "" &> /dev/null     
-                else
-                  error "Something went wrong!! Please avoid providing code base." 
-                  continue
-                fi
             else    
               #if user input length is not too long ....
                QUESTION=$(echo "$QUESTION" | grep -v '^ *$' |tr '\n' ' ')
-               RESPONSE=$(curl https://api.openai.com/v1/completions \
+               curl https://api.openai.com/v1/completions \
                         -sS \
                         -H 'Content-Type: application/json' \
                         -H "Authorization: Bearer $OPENAI_TOKEN" \
@@ -470,14 +458,8 @@ while $running; do
                                 "top_p":1,
                                 "frequency_penalty": 0.81,
                                 "presence_penalty": 0.8
-                            }')
-                 handleresponse "$RESPONSE" 1
-                 if [ $? -eq 0 ]; then
-                   echo "" &> /dev/null
-                 else
-                   error "Something went wrong!! Please avoid providing code base." 
-                   continue
-                 fi
+                            }' | jq -M -r '.choices[].text|gsub("\\\\n";"\n")' | awk '{ printf "%s\n", $0 }' > $HOME/.local/dekuai/answers.txt 
+
             fi &
             pid=$!
             loading
