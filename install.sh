@@ -1,52 +1,90 @@
-#!/usr/bin/bash
+#!/bin/sh
 
-# Check dependencies
-if type curl &>/dev/null
-then
-        echo "" &>/dev/null
-else
-  if type apt &/dev/null
-  then
-        sudo apt update && apt upgrade
-         sudo apt install curl
-  else
-    if type pkg &/dev/null
-    then 
-        pkg update && pkg upgrade
-        pkg install curl
+SYSTEM=$(uname -o)
+
+
+android(){
+  pkg update 
+  for i in gum curl glow jq 
+  do
+    if which $i > /dev/null; then
+      echo "package $i is already installed in the system"
     else
-        printf "Can't find package installer for required dependencies. Install package 'curl' & 'jq' manually......"
-        exit 0
+      pkg install "$i"
     fi
-  fi
-fi
-
-if type jq &>/dev/null
-then
-        echo "" &>/dev/null
-else
-       sudo apt install jq
-fi
-
-sudo curl -sS https://raw.githubusercontent.com/Hishantik/openAI-shell-cli/main/dekuai.sh -o ~/.local/bin/dekuai
-
-sudo chmod +x ~/.local/bin/dekuai
-
-echo -n "Please enter your OpenAI API key (you can one get from https://https://openai.com/account/api-keys): "
-read token
-
-if [ -f ~/.zshrc ]; then
-  echo "export OPENAI_TOKEN=$token" >> ~/.zshrc
-  echo "export PATH=$PATH:~/.local/bin" >> ~/.zshrc
-else
-  if [ -f ~/.bashrc ]; then
-    echo "export OPENAI_TOKEN=$token" >> ~/.bashrc
-    echo "export PATH=$PATH:~/.local/bin" >> ~/.bashrc
+  done
+  if which dekuai > /dev/null; then
+    echo "" &> /dev/null
   else
-    export OPENAI_TOKEN=$token
-    echo "You need to add this to your shell profile: export OPENAI_TOKEN=$token"
+    curl -fsSL https://raw.githubusercontent.com/Hishantik/openAI-shell-cli/main/dekuai.sh -o ~/../usr/bin/dekuai || echo "Connection error please use vpn and run the script again...."
+    chmod +x ~/../usr/bin/dekuai
   fi
-fi
-echo "Installation complete."
-source ~/.zshrc || source ~/.bashrc
+}
+
+macos(){
+   sudo echo "185.199.108.133 raw.githubusercontent.com" >> /etc/hosts
+   while $running; do
+     if which brew > /dev/null; then
+       for i in gum curl glow jq
+       do
+         if which $i > /dev/null; then
+           echo "package $i is already installed in the system"
+         else
+           brew install "$i"
+         fi
+       done
+       break
+     else
+       /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+     fi
+  done
+  if which dekuai > /dev/null; then
+    echo "" &> /dev/null
+  else
+    sudo curl -fsSL https://raw.githubusercontent.com/Hishantik/openAI-shell-cli/main/dekuai.sh -o "$(brew --prefix)"/bin/dekuai || echo "Connection error please use vpn and run the script again...."
+    chmod +x "$(brew --prefix)"/bin/dekuai
+  fi
+
+}
+
+linux(){
+  sudo mkdir -p /etc/apt/keyrings
+  curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg
+  echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list
+  sudo echo "185.199.108.133 raw.githubusercontent.com" >> /etc/hosts
+  sudo apt update
+  for i in gum curl glow jq 
+  do
+    if which $i > /dev/null; then
+      echo "package $i is already installed in the system"
+    else
+      apt install "$i"
+    fi
+  done
+  if which dekuai > /dev/null; then
+    echo "" &> /dev/null
+  else
+    sudo curl -fsSL https://raw.githubusercontent.com/Hishantik/openAI-shell-cli/main/dekuai.sh -o /usr/bin/dekuai || echo "Connection error please use vpn and run the script again...."
+    sudo chmod +x /usr/bin
+  fi
+}
+
+
+
+checkOS(){
+  case "$SYSTEM" in
+    "Android") android;;
+    "GNU/Linux") linux;;
+    "Darwin") macos;;
+  esac
+}
+
+
+#############
+### MAIN ###
+#############
+checkOS
+bash install.sh
+
+
 
