@@ -77,10 +77,10 @@ linux(){
   done
   if which dekuai > /dev/null; then
     sudo dekuai -u
-    sudo curl -sS https://raw.githubusercontent.com/Hishantik/openAI-shell-cli/v1/dekuai.sh -o /usr/bin/dekuai 
+    sudo curl -sS https://raw.githubusercontent.com/Hishantik/openAI-shell-cli/main/dekuai.sh -o /usr/bin/dekuai 
     sudo chmod +x /usr/bin/dekuai
   else
-    sudo curl -sS https://raw.githubusercontent.com/Hishantik/openAI-shell-cli/v1/dekuai.sh -o /usr/bin/dekuai 
+    sudo curl -sS https://raw.githubusercontent.com/Hishantik/openAI-shell-cli/main/dekuai.sh -o /usr/bin/dekuai 
     sudo chmod +x /usr/bin/dekuai
   fi
 }
