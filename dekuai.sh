@@ -229,7 +229,7 @@ spinner(){
 ## CLI VERSION ##
 ################
 
-VERSION="1.2.3"
+VERSION="0.1.2"
 
 version (){
   sleep 1;clear
