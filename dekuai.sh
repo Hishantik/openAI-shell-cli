@@ -134,7 +134,6 @@ checktoken(){
 
 
 menu(){
-  clear
   gum style\
     --foreground "#1B998B" --bold "DekuAI MENU :"
   gum style\
@@ -151,7 +150,7 @@ menu(){
     "version") version && menu;;
     "login") provideToken && menu;;
     "uninstall") uninstall && exit 0;;
-    "exit") quit ;;
+    "exit") clear && quit ;;
   esac  
 }
 
@@ -176,7 +175,7 @@ option(){
   case "$OPTIONS" in
     "dekuai") "$0" ;;
     "dalle") dalle && option;;
-    "back") menu ;;
+    "back") clear && menu ;;
   esac  
 }
 
