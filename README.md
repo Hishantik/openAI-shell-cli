@@ -54,7 +54,7 @@ https://user-images.githubusercontent.com/60609786/217540475-a69c759f-01dc-40bf-
 
 
 
-1. Login Section
+1. Auth Section
 
 ![Screenshot from 2023-02-08 18-51-18](https://user-images.githubusercontent.com/60609786/217542748-690bc649-b5a0-4e6d-ac33-8d1600b6f849.png)
 
