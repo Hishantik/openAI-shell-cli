@@ -77,8 +77,7 @@ do_install() {
 
     # Check for Go
     if ! command -v go &> /dev/null; then
-        warn "Go is not installed."
-        echo "Please install Go from: https://go.dev/doc/install"
+        error "Go is not installed. Please install from: https://go.dev/doc/install"
         exit 1
     fi
 
@@ -98,34 +97,27 @@ do_install() {
             cp "$BINARY_NAME" "$INSTALL_DIR/"
         fi
     else
-        # Download binary from GitHub releases
-        info "Downloading pre-built binary..."
+        # Build from source via git clone
+        info "Building from source..."
 
         TMP_DIR=$(mktemp -d)
         cd "$TMP_DIR"
 
-        case "$OS" in
-            Linux*) FILENAME="dekuai-linux-amd64";;
-            Darwin*) FILENAME="dekuai-darwin-amd64";;
-        esac
+        info "Cloning repository..."
+        git clone --depth 1 https://github.com/${REPO} dekuai-src
+        cd dekuai-src
 
-        URL="https://github.com/${REPO}/releases/download/v${VERSION}/${FILENAME}"
+        info "Building binary..."
+        go build -o "$BINARY_NAME" .
 
-        if command -v curl &> /dev/null; then
-            curl -fsSL "$URL" -o "$BINARY_NAME" || {
-                warn "Pre-built binary not available. Building from source..."
-                exit 1
-            }
-        elif command -v wget &> /dev/null; then
-            wget -q "$URL" -O "$BINARY_NAME" || {
-                warn "Pre-built binary not available. Building from source..."
-                exit 1
-            }
+        mkdir -p "$INSTALL_DIR"
+        if [ "$INSTALL_DIR" = "/usr/local/bin" ]; then
+            sudo cp "$BINARY_NAME" "$INSTALL_DIR/"
+        else
+            cp "$BINARY_NAME" "$INSTALL_DIR/"
         fi
 
-        chmod +x "$BINARY_NAME"
-        mkdir -p "$INSTALL_DIR"
-        sudo cp "$BINARY_NAME" "$INSTALL_DIR/"
+        chmod +x "${INSTALL_DIR}/${BINARY_NAME}"
 
         rm -rf "$TMP_DIR"
     fi
@@ -135,12 +127,9 @@ do_install() {
         warn "Add $INSTALL_DIR to your PATH if not already there."
     fi
 
-    info "Installed successfully!"
+    info "Installed successfully to ${INSTALL_DIR}/${BINARY_NAME}"
     info "Run 'dekuai' to start."
     info "Run 'dekuai --uninstall' to remove."
-
-    # Cleanup
-    rm -f "$SCRIPT_DIR/dekuai" 2>/dev/null || true
 }
 
 # Main
