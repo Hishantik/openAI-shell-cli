@@ -114,11 +114,11 @@ do_install() {
         mkdir -p "$INSTALL_DIR"
         if [ "$INSTALL_DIR" = "/usr/local/bin" ]; then
             sudo cp "$BINARY_NAME" "$INSTALL_DIR/"
+            sudo chmod +x "${INSTALL_DIR}/${BINARY_NAME}"
         else
             cp "$BINARY_NAME" "$INSTALL_DIR/"
+            chmod +x "${INSTALL_DIR}/${BINARY_NAME}"
         fi
-
-        chmod +x "${INSTALL_DIR}/${BINARY_NAME}"
 
         rm -rf "$TMP_DIR"
     fi
