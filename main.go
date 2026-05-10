@@ -3,8 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
@@ -279,22 +281,154 @@ func uninstall() {
 
 // Print help
 func printHelp() {
-	fmt.Println(tealStyle.Render("\n╭─ DekuAI Help ────────────────────────────────────╮"))
-	fmt.Println("│                                                     │")
-	fmt.Println("│  dekuai              Start the TUI                  │")
-	fmt.Println("│  dekuai --help        Show this help                 │")
-	fmt.Println("│  dekuai --version     Show version                   │")
-	fmt.Println("│  dekuai --uninstall   Remove dekuai                  │")
-	fmt.Println("│                                                     │")
-	fmt.Println(successStyle.Render("╰─────────────────────────────────────────────────╯"))
+	fmt.Println(tealStyle.Render("\n ╭─ DekuAI Help ────────────────────────────────────╮"))
+	fmt.Println("                    │                                                  │")
+	fmt.Println("                    │  dekuai              Start the TUI               │")
+	fmt.Println("                    │  dekuai --help        Show this help             │")
+	fmt.Println("                    │  dekuai --version     Show version               │")
+	fmt.Println("                    │  dekuai --uninstall   Remove dekuai              │")
+	fmt.Println("                    │  dekuai --update      Update to latest           │")
+	fmt.Println("                    │                                                  │")
+	fmt.Println(successStyle.Render("╰──────────────────────────────────────────────────╯"))
 }
 
 // Print version
 func printVersion() {
-	fmt.Println(tealStyle.Render("\n╭─ DekuAI Version ─────────────────────────────────╮"))
-	fmt.Println(successStyle.Render("│  v0.4.0                                        │"))
-	fmt.Println(dimStyle.Render("│  Built with Go + Bubble Tea                    │"))
-	fmt.Println(tealStyle.Render("╰─────────────────────────────────────────────────╯"))
+	fmt.Println(tealStyle.Render("\n    ╭─ DekuAI Version ────────────────────────────────╮"))
+	fmt.Println(successStyle.Render("   │  v0.4.0                                         │"))
+	fmt.Println(dimStyle.Render("       │  Built with Go + Bubble Tea                     │"))
+	fmt.Println(tealStyle.Render("      ╰─────────────────────────────────────────────────╯"))
+}
+
+// Update downloads and installs the latest version
+func update() {
+	githubRepo := "Hishantik/openAI-shell-cli"
+	currentVersion := "v0.4.0"
+	userBinDir := filepath.Join(os.Getenv("HOME"), ".local", "bin")
+
+	fmt.Println(tealStyle.Render("\n    ╭─ DekuAI Update ────────────────────────────────╮"))
+	fmt.Println(dimStyle.Render("       │  Checking for updates..."))
+
+	// Detect architecture
+	arch := "amd64"
+	if strings.Contains(strings.ToLower(runCommand("uname -m")), "arm64") ||
+		strings.Contains(strings.ToLower(runCommand("uname -m")), "aarch64") {
+		arch = "arm64"
+	}
+
+	binaryName := fmt.Sprintf("dekuai-linux-%s", arch)
+	downloadURL := fmt.Sprintf("https://github.com/%s/releases/download/%s/%s", githubRepo, currentVersion, binaryName)
+
+	// Get current binary path
+	currentPath, err := exec.LookPath("dekuai")
+	if err != nil {
+		currentPath = filepath.Join(userBinDir, "dekuai")
+	}
+
+	// Create temp directory
+	tmpDir, err := os.MkdirTemp("", "dekuai-update-*")
+	if err != nil {
+		fmt.Println(errorStyle.Render("   │  ✗ Failed to create temp directory"))
+		fmt.Println(tealStyle.Render("      ╰─────────────────────────────────────────────────╯"))
+		return
+	}
+	defer os.RemoveAll(tmpDir)
+
+	tmpBinary := filepath.Join(tmpDir, "dekuai")
+
+	// Download the update
+	fmt.Println(dimStyle.Render(fmt.Sprintf("       │  Downloading %s...", binaryName)))
+
+	req, err := http.NewRequest("HEAD", downloadURL, nil)
+	if err != nil {
+		fmt.Println(errorStyle.Render("   │  ✗ Failed to create request"))
+		fmt.Println(tealStyle.Render("      ╰─────────────────────────────────────────────────╯"))
+		return
+	}
+
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println(errorStyle.Render(fmt.Sprintf("   │  ✗ Failed to download: %v", err)))
+		fmt.Println(tealStyle.Render("      ╰─────────────────────────────────────────────────╯"))
+		return
+	}
+	resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		fmt.Println(errorStyle.Render(fmt.Sprintf("   │  ✗ Binary not found at releases")))
+		fmt.Println(tealStyle.Render("      ╰─────────────────────────────────────────────────╯"))
+		return
+	}
+
+	// Download using curl or wget
+	var downloadErr error
+	if commandExists("curl") {
+		downloadErr = runDownload("curl", "-fSL", downloadURL, "-o", tmpBinary)
+	} else if commandExists("wget") {
+		downloadErr = runDownload("wget", "-q", downloadURL, "-O", tmpBinary)
+	} else {
+		fmt.Println(errorStyle.Render("   │  ✗ curl or wget required for update"))
+		fmt.Println(tealStyle.Render("      ╰─────────────────────────────────────────────────╯"))
+		return
+	}
+
+	if downloadErr != nil {
+		fmt.Println(errorStyle.Render("   │  ✗ Failed to download binary"))
+		fmt.Println(tealStyle.Render("      ╰─────────────────────────────────────────────────╯"))
+		return
+	}
+
+	// Make it executable
+	os.Chmod(tmpBinary, 0755)
+
+	// Install
+	fmt.Println(dimStyle.Render("       │  Installing update..."))
+
+	if err := os.Rename(tmpBinary, currentPath+".new"); err != nil {
+		// Try copy if rename fails (cross filesystem)
+		if err := copyFile(tmpBinary, currentPath+".new"); err != nil {
+			fmt.Println(errorStyle.Render("   │  ✗ Failed to install"))
+			fmt.Println(tealStyle.Render("      ╰─────────────────────────────────────────────────╯"))
+			return
+		}
+	}
+
+	os.Chmod(currentPath+".new", 0755)
+	os.Rename(currentPath+".new", currentPath)
+
+	fmt.Println(successStyle.Render("   │  ✓ Updated successfully!"))
+	fmt.Println(dimStyle.Render("       │  Restart dekuai to use the new version"))
+	fmt.Println(tealStyle.Render("      ╰─────────────────────────────────────────────────╯"))
+}
+
+func commandExists(cmd string) bool {
+	_, err := exec.LookPath(cmd)
+	return err == nil
+}
+
+func runCommand(cmd string) string {
+	out, _ := exec.Command("sh", "-c", cmd).Output()
+	return string(out)
+}
+
+func runDownload(cmd string, args ...string) error {
+	return exec.Command(cmd, args...).Run()
+}
+
+func copyFile(src, dst string) error {
+	from, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer from.Close()
+	to, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer to.Close()
+	_, err = io.Copy(to, from)
+	return err
 }
 
 func main() {
@@ -309,6 +443,9 @@ func main() {
 			return
 		case "--uninstall", "-u":
 			uninstall()
+			return
+		case "--update", "-U":
+			update()
 			return
 		}
 	}
