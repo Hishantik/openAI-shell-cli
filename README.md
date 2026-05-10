@@ -3,9 +3,6 @@
 __DekuAI__<img width=40 height=40 src="https://user-images.githubusercontent.com/60609786/217486509-9049409e-ea4c-423b-ad64-af54ab91620b.png">
 ==========
 
-<!-- ![prs are welcome](https://img.shields.io/badge/Prs-Welcome%20-588157) -->
-
-
 ![Version](https://img.shields.io/badge/Version-v0.2.0-F6AA16?style=flat-square&logo=python&logoColor=FFFFFF)
 ![Python](https://img.shields.io/badge/Python-3.8+-1B998B?style=flat-square&logo=python&logoColor=FFFFFF)
 ![Discord](https://img.shields.io/discord/1058828666362138765?style=flat-square&logo=discord)
@@ -18,7 +15,6 @@ __`Supported platforms`__
 ![os Windows](https://img.shields.io/badge/Os-Windows(WSL)%20-1B998B?style=flat-square&logo=windows)
 
 ***
-
 
 <img width=280 height=280 align="right" src="https://user-images.githubusercontent.com/60609786/217484128-764c7cdb-8027-4a94-9803-31727e70af13.gif#gh-dark-mode-only">
 
@@ -40,7 +36,9 @@ __Features__
 __Quick Start__
 
 ```bash
-# Install
+# Clone and install
+git clone https://github.com/Hishantik/openAI-shell-cli
+cd openAI-shell-cli
 pip install -e .
 
 # Authenticate
@@ -61,12 +59,6 @@ ___
 
 + [Prerequisites](#prerequisites)
 + [Installation](#installation)
-   - [Python (Recommended)](#python)
-   - [Shell (Legacy)](#shell-legacy)
-   - [Android](#android)
-   - [Linux](#linux)
-   - [macOS](#macos)
-   - [Windows](#windows)
 + [Usage](#usage)
 + [Configuration](#configuration)
 + [Uninstall](#uninstall)
@@ -79,41 +71,31 @@ ___
 
 #### **Prerequisites**
 
-+ **Python 3.8+** - Required for the new Python CLI
++ **Python 3.8+**
 + **OpenAI API Key** - Get one at [platform.openai.com](https://platform.openai.com/api-keys)
 
 #### **Installation**
 
-##### **Python (Recommended)**
+##### **Clone and install**
 
 ```bash
-# Install from source
+git clone https://github.com/Hishantik/openAI-shell-cli
+cd openAI-shell-cli
 pip install -e .
-
-# Or use the installer
-./install-python.sh
 ```
 
-##### **Shell (Legacy)**
+##### **Android (Termux)**
 
-For the legacy shell version:
-
-```shell
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/hishantik/OpenAI-shell-cli/main/install.sh)"
-```
-
-##### **Android**
-
-Install [Termux](https://termux.dev/en/) first, then:
-
-```shell
+```bash
 pkg install python -y
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/hishantik/OpenAI-shell-cli/main/install-python.sh)"
+git clone https://github.com/Hishantik/openAI-shell-cli
+cd openAI-shell-cli
+pip install -e .
 ```
 
-##### **Linux (Debian/Ubuntu)**
+##### **Linux**
 
-```shell
+```bash
 sudo apt install python3 python3-pip -y
 git clone https://github.com/Hishantik/openAI-shell-cli
 cd openAI-shell-cli
@@ -122,18 +104,18 @@ pip install -e .
 
 ##### **macOS**
 
-```shell
+```bash
 brew install python3
 git clone https://github.com/Hishantik/openAI-shell-cli
 cd openAI-shell-cli
 pip install -e .
 ```
 
-##### **Windows**
+##### **Windows (WSL)**
 
-Install [WSL](https://docs.microsoft.com/en-us/windows/wsl/) with Ubuntu, then:
+Install [WSL](https://docs.microsoft.com/en-us/windows/wsl/), then:
 
-```shell
+```bash
 sudo apt install python3 python3-pip
 git clone https://github.com/Hishantik/openAI-shell-cli
 cd openAI-shell-cli
@@ -194,8 +176,6 @@ rm -rf ~/.config/dekuai
 #### Contributing
 
 Pull requests are welcome! Please open an issue first to discuss changes.
-
-+ [Contribution guide](./CONTRIBUTING.md)
 
 If you have any issues, [**join our Discord server**](https://discord.gg/dgJAesCnQ5)
 
