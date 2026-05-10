@@ -1,4 +1,5 @@
 #!/bin/bash
+# DekuAI Installer v0.4.0
 set -e
 
 VERSION="0.4.0"
