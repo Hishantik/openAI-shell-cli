@@ -63,6 +63,7 @@ type model struct {
 	currentModel  AIModel
 	showMenu      bool
 	menuSelection int
+	response      string
 }
 
 // Initialize model
@@ -74,6 +75,7 @@ func initialModel() model {
 		currentModel:  models[0],
 		showMenu:      false,
 		menuSelection: 0,
+		response:      "",
 	}
 }
 
@@ -107,17 +109,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.showMenu {
 				m.currentModel = models[m.menuSelection]
 				m.showMenu = false
-			} else if m.currentInput != "" {
+			} else if m.currentInput != "" && !m.loading {
 				m.loading = true
 				prompt := m.currentInput
 				m.currentInput = ""
 				m.messages = append(m.messages, Message{Role: "user", Content: prompt})
-
-				go func() {
-					response := callAPI(m.currentModel, prompt)
-					m.messages = append(m.messages, Message{Role: "assistant", Content: response})
-					m.loading = false
-				}()
+				m.response = callAPI(m.currentModel, prompt)
+				m.messages = append(m.messages, Message{Role: "assistant", Content: m.response})
+				m.loading = false
+				m.response = ""
 			}
 		case "backspace":
 			if len(m.currentInput) > 0 {
@@ -126,7 +126,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 	case rune:
-		if !m.showMenu {
+		if !m.showMenu && !m.loading {
 			m.currentInput += string(msg)
 		}
 	}
