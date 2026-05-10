@@ -1,7 +1,7 @@
 [project]
 name = "dekuai"
-version = "0.2.0"
-description = "OpenAI CLI tool with GPT and DALL-E support"
+version = "0.3.0"
+description = "Multi-provider AI CLI tool with GPT, Claude, Gemini, and open-source models"
 readme = "README.md"
 requires-python = ">=3.8"
 authors = [
@@ -9,7 +9,7 @@ authors = [
 ]
 dependencies = [
     "click>=8.0.0",
-    "openai>=1.0.0",
+    "requests>=2.31.0",
     "rich>=13.0.0",
     "python-dotenv>=1.0.0",
 ]
