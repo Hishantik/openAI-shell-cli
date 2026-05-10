@@ -4,45 +4,46 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-DekuAI is a shell-based CLI tool that provides OpenAI GPT-3 text completion and DALL-E image generation via a TUI interface. It's written in POSIX shell and uses [gum](https://github.com/charmbracelet/gum) for the UI.
+DekuAI is a TUI-based CLI tool for AI models from multiple providers. Built with Go using the Charm ecosystem (Bubble Tea, Lipgloss).
 
 ## Running the CLI
 
 ```bash
-./dekuai.sh                    # Start interactive prompt
-./dekuai.sh --menu             # Show menu options
-./dekuai.sh --help             # Show help
-./dekuai.sh --version          # Show version (v0.1.2)
-./dekuai.sh --update           # Update to latest version
-./dekuai.sh --uninstall        # Uninstall
+go build -o dekuai .    # Build
+./dekuai                 # Run (requires terminal)
 ```
 
 ## Architecture
 
-- **Single main script**: `dekuai.sh` contains all logic (~490 lines)
-- **Modular functions**: Authentication, menus, API calls, UI rendering are separate functions
-- **Flow**: `checktoken` → main loop → `gum write` for input → curl API call → `gum style` for output
-- **State**: Uses variables like `running` boolean to control loop; `QUESTION`/`RESPONSE` for user data
+- **Single main file**: `main.go` contains all TUI logic
+- **Framework**: Bubble Tea for TUI, Lipgloss for styling
+- **Models**: Array of `AIModel` structs with ID, Name, Endpoint
+- **State**: `model` struct holds messages, input, loading, menu state
 
 ## Key Patterns
 
-1. **Authentication**: Token stored in shell rc files (~/.zshrc, ~/.bashrc) as `OPENAI_TOKEN`
-2. **API calls**: Uses `curl` to OpenAI endpoints with JSON payloads, `jq` for parsing responses
-3. **UI styling**: All visual elements use `gum style` with hex colors (#1B998B green, #F6AA1C orange)
-4. **Terminal sizing**: `WIDTH=$(tput cols)` for responsive layout
+1. **Model Selection**: Press `m` to open menu, navigate with `↑↓`, select with `enter`
+2. **API Calls**: HTTP POST to different endpoints based on model type
+3. **Concurrent Requests**: API calls run in goroutines to not block TUI
 
-## Dependencies
+## Style System
 
-Required tools (must be installed): `curl`, `jq`, `gum`, `glow`, `awk`, `grep`
+Using Lipgloss with brand colors:
+- `#F6AA1C` - Orange (brand)
+- `#1B998B` - Teal (primary)
+- `#83C5BE` - Light teal (answers)
+- `#6B7280` - Gray (dim text)
 
-## API Configuration
+## Supported Models
 
-- Model: `text-davinci-003` for completions
-- Endpoints: `/v1/completions` (text), `/v1/images/generations` (DALL-E)
-- Max tokens: 4000, Temperature: 0.7
+40+ models from opencode.ai/zen endpoints:
+- GPT models (5.x, 4, 3.5-turbo)
+- Claude models (Opus, Sonnet, Haiku)
+- Gemini models
+- Open source: Qwen, MiniMax, Nemotron, etc.
 
-## Style Conventions
+## Environment
 
-- Color scheme: teal (#1B998B), orange (#F6AA1C), yellow (#FFB703)
-- Monkey emoji (🐒🐵🙈) used throughout for branding
-- Functions use camelCase naming
+```bash
+export OPENAI_API_KEY=your_key_here  # Optional for opencode.ai endpoints
+```
