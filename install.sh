@@ -18,12 +18,35 @@ warn() { echo -e "${YELLOW}==>${NC} $1"; }
 error() { echo -e "${RED}==>${NC} $1"; }
 
 # Detect OS
-OS=$(uname -s)
-case "$OS" in
-    Linux*) INSTALL_DIR="/usr/local/bin";;
-    Darwin*) INSTALL_DIR="/usr/local/bin";;
-    *) error "Unsupported OS: $OS"; exit 1;;
-esac
+detect_os() {
+    OS=$(uname -s)
+    ARCH=$(uname -m)
+    case "$OS" in
+        Linux*)
+            if [ "$ARCH" = "x86_64" ]; then
+                FILENAME="dekuai-linux-amd64"
+            elif [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
+                FILENAME="dekuai-linux-arm64"
+            else
+                error "Unsupported architecture: $ARCH"
+                exit 1
+            fi
+            INSTALL_DIR="/usr/local/bin"
+            ;;
+        Darwin*)
+            if [ "$ARCH" = "x86_64" ]; then
+                FILENAME="dekuai-darwin-amd64"
+            elif [ "$ARCH" = "arm64" ]; then
+                FILENAME="dekuai-darwin-arm64"
+            fi
+            INSTALL_DIR="/usr/local/bin"
+            ;;
+        *)
+            error "Unsupported OS: $OS"
+            exit 1
+            ;;
+    esac
+}
 
 # Print help
 show_help() {
@@ -76,40 +99,47 @@ do_uninstall() {
 do_install() {
     info "Installing DekuAI v${VERSION}..."
 
-    # Check for Go
-    if ! command -v go &> /dev/null; then
-        error "Go is not installed. Please install from: https://go.dev/doc/install"
-        exit 1
-    fi
+    detect_os
 
-    # Get script directory
+    URL="https://github.com/${REPO}/releases/download/v${VERSION}/${FILENAME}"
+
+    # Get script directory to check for local source
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-    # Check if we're in the repo directory
+    # Check if we're in the repo directory with source
     if [ -f "$SCRIPT_DIR/main.go" ] && [ -f "$SCRIPT_DIR/go.mod" ]; then
         info "Building from local source..."
         cd "$SCRIPT_DIR"
-        go build -o "$BINARY_NAME" .
+        go build -ldflags="-s -w" -o "$BINARY_NAME" .
 
         if [ "$SCRIPT_DIR" = "/usr/local/bin" ]; then
             sudo cp "$BINARY_NAME" "$INSTALL_DIR/"
+            sudo chmod +x "${INSTALL_DIR}/${BINARY_NAME}"
         else
             mkdir -p "$INSTALL_DIR"
             cp "$BINARY_NAME" "$INSTALL_DIR/"
+            chmod +x "${INSTALL_DIR}/${BINARY_NAME}"
         fi
     else
-        # Build from source via git clone
-        info "Building from source..."
+        # Download pre-built binary
+        info "Downloading ${FILENAME}..."
 
         TMP_DIR=$(mktemp -d)
         cd "$TMP_DIR"
 
-        info "Cloning repository..."
-        git clone --depth 1 https://github.com/${REPO} dekuai-src
-        cd dekuai-src
-
-        info "Building binary..."
-        go build -o "$BINARY_NAME" .
+        if command -v curl &> /dev/null; then
+            curl -fSL "$URL" -o "$BINARY_NAME" || {
+                error "Failed to download. Please check if v${VERSION} release exists."
+                rm -rf "$TMP_DIR"
+                exit 1
+            }
+        elif command -v wget &> /dev/null; then
+            wget -q "$URL" -O "$BINARY_NAME" || {
+                error "Failed to download. Please check if v${VERSION} release exists."
+                rm -rf "$TMP_DIR"
+                exit 1
+            }
+        fi
 
         mkdir -p "$INSTALL_DIR"
         if [ "$INSTALL_DIR" = "/usr/local/bin" ]; then
@@ -121,11 +151,6 @@ do_install() {
         fi
 
         rm -rf "$TMP_DIR"
-    fi
-
-    # Add to PATH if needed
-    if [[ ":$PATH:" != *":$INSTALL_DIR:"* ]]; then
-        warn "Add $INSTALL_DIR to your PATH if not already there."
     fi
 
     info "Installed successfully to ${INSTALL_DIR}/${BINARY_NAME}"
