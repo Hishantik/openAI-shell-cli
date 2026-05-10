@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -17,6 +18,8 @@ var (
 	brandStyle  = lipgloss.NewStyle().Foreground(lipgloss.Color("#F6AA1C")).Bold(true)
 	tealStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("#1B998B")).Bold(true)
 	dimStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color("#6B7280")).Faint(true)
+	errorStyle  = lipgloss.NewStyle().Foreground(lipgloss.Color("#EF233C"))
+	successStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#1B998B")).Bold(true)
 	answerStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#83C5BE"))
 	borderStyle = lipgloss.NewStyle().BorderStyle(lipgloss.RoundedBorder()).BorderForeground(lipgloss.Color("#1B998B"))
 )
@@ -240,7 +243,76 @@ func (m model) View() string {
 	return b.String()
 }
 
+// Uninstall removes the binary
+func uninstall() {
+	fmt.Println(successStyle.Render("\n╭─ DekuAI Uninstall ──────────────────────────────╮"))
+
+	paths := []string{
+		"/usr/local/bin/dekuai",
+		filepath.Join(os.Getenv("HOME"), ".local/bin", "dekuai"),
+	}
+
+	removed := false
+	for _, path := range paths {
+		if _, err := os.Stat(path); err == nil {
+			if err := os.Remove(path); err == nil {
+				fmt.Printf(successStyle.Render("│ ✓ Removed: %s\n"), path)
+				removed = true
+			}
+		}
+	}
+
+	if !removed {
+		fmt.Printf(errorStyle.Render("│ ✗ Could not find dekuai binary\n"))
+	}
+
+	// Clean up config directory
+	configDir := filepath.Join(os.Getenv("HOME"), ".config", "dekuai")
+	if err := os.RemoveAll(configDir); err == nil {
+		fmt.Printf(successStyle.Render("│ ✓ Removed config: %s\n"), configDir)
+	}
+
+	fmt.Println(successStyle.Render("╰─────────────────────────────────────────────────╯"))
+	fmt.Println(successStyle.Render("\n✓ DekuAI has been uninstalled!"))
+	fmt.Println(dimStyle.Render("\nIf you installed via a package manager, use that to remove."))
+}
+
+// Print help
+func printHelp() {
+	fmt.Println(tealStyle.Render("\n╭─ DekuAI Help ────────────────────────────────────╮"))
+	fmt.Println("│                                                     │")
+	fmt.Println("│  dekuai              Start the TUI                  │")
+	fmt.Println("│  dekuai --help        Show this help                 │")
+	fmt.Println("│  dekuai --version     Show version                   │")
+	fmt.Println("│  dekuai --uninstall   Remove dekuai                  │")
+	fmt.Println("│                                                     │")
+	fmt.Println(successStyle.Render("╰─────────────────────────────────────────────────╯"))
+}
+
+// Print version
+func printVersion() {
+	fmt.Println(tealStyle.Render("\n╭─ DekuAI Version ─────────────────────────────────╮"))
+	fmt.Println(successStyle.Render("│  v0.4.0                                        │"))
+	fmt.Println(dimStyle.Render("│  Built with Go + Bubble Tea                    │"))
+	fmt.Println(tealStyle.Render("╰─────────────────────────────────────────────────╯"))
+}
+
 func main() {
+	// Handle CLI flags
+	if len(os.Args) > 1 {
+		switch os.Args[1] {
+		case "--help", "-h":
+			printHelp()
+			return
+		case "--version", "-v":
+			printVersion()
+			return
+		case "--uninstall", "-u":
+			uninstall()
+			return
+		}
+	}
+
 	p := tea.NewProgram(initialModel(), tea.WithAltScreen())
 	if err := p.Start(); err != nil {
 		fmt.Println("Error:", err)

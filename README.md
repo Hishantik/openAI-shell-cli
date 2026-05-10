@@ -166,6 +166,25 @@ go build -o dekuai .
 ./dekuai
 ```
 
+## 🗑️ Uninstall
+
+### Using the CLI
+```bash
+dekuai --uninstall
+```
+
+### Using the installer
+```bash
+./install.sh uninstall
+```
+
+### Manual removal
+```bash
+sudo rm /usr/local/bin/dekuai       # Linux/macOS system-wide
+rm ~/.local/bin/dekuai              # User installation
+rm -rf ~/.config/dekuai             # Remove config
+```
+
 ## 🤝 Contributing
 
 Contributions are welcome! Feel free to submit issues and pull requests.
